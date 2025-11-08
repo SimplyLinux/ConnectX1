@@ -115,14 +115,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Download button handlers (you can customize these URLs later)
+// Download button tracking (optional analytics)
 const downloadButtons = document.querySelectorAll('.download-btn');
 downloadButtons.forEach(button => {
     button.addEventListener('click', (e) => {
-        const platform = button.getAttribute('data-platform');
-        // You can add your download URLs here
-        console.log(`Download clicked for platform: ${platform}`);
-        // Example: window.location.href = `https://your-domain.com/downloads/${platform}`;
+        const platform = button.querySelector('.download-platform').textContent;
+        console.log(`Download started for: ${platform}`);
+        // You can add analytics tracking here if needed
     });
 });
 
