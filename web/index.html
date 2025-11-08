@@ -10,8 +10,125 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Download Instructions Modal -->
+    <div id="download-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </div>
+                <h2 class="modal-title">Important Installation Instructions</h2>
+            </div>
+            
+            <div class="modal-body">
+                <!-- macOS Instructions -->
+                <div id="macos-instructions" class="instructions-content" style="display: none;">
+                    <div class="warning-box">
+                        <strong>⚠️ Trial Version Notice</strong>
+                        <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly.</p>
+                    </div>
+                    
+                    <h3>macOS Installation Steps:</h3>
+                    <ol>
+                        <li>Download and extract the ZIP file</li>
+                        <li>Move ConnectX1.app to your Applications folder</li>
+                        <li>Open Terminal and run the following command:</li>
+                    </ol>
+                    
+                    <div class="code-block">
+                        <code>sudo xattr -rd com.apple.quarantine /Applications/ConnectX1.app</code>
+                        <button class="copy-btn" data-copy="sudo xattr -rd com.apple.quarantine /Applications/ConnectX1.app">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ Why is this needed?</strong>
+                        <p>Since we don't have an Apple Developer account yet, macOS will block the app by default. This command removes the quarantine flag and allows the app to run.</p>
+                    </div>
+                </div>
+                
+                <!-- Windows Instructions -->
+                <div id="windows-instructions" class="instructions-content" style="display: none;">
+                    <div class="warning-box">
+                        <strong>⚠️ Trial Version Notice</strong>
+                        <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly.</p>
+                    </div>
+                    
+                    <h3>Windows Installation Steps:</h3>
+                    <ol>
+                        <li>Download the installer (.exe file)</li>
+                        <li>Run the installer</li>
+                        <li>You may see a Windows SmartScreen warning</li>
+                        <li>Click "More info" and then "Run anyway"</li>
+                    </ol>
+                    
+                    <div class="info-box">
+                        <strong>ℹ️ Why the warning?</strong>
+                        <p>Our application is not yet certified by Microsoft. This is normal for new applications. The warning will disappear once we obtain code signing certificates.</p>
+                    </div>
+                </div>
+                
+                <!-- Linux Instructions -->
+                <div id="linux-instructions" class="instructions-content" style="display: none;">
+                    <div class="warning-box">
+                        <strong>⚠️ Trial Version Notice</strong>
+                        <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly.</p>
+                    </div>
+                    
+                    <h3>Linux Installation Steps:</h3>
+                    <ol>
+                        <li>Download the .deb package</li>
+                        <li>Install using your package manager:</li>
+                    </ol>
+                    
+                    <div class="code-block">
+                        <code>sudo dpkg -i ConnectX1_0.1.1_amd64.deb</code>
+                        <button class="copy-btn" data-copy="sudo dpkg -i ConnectX1_0.1.1_amd64.deb">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                    
+                    <p>Or double-click the .deb file to install via Software Center.</p>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <a id="confirm-download" href="#" class="btn-primary" download>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Proceed with Download
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating Theme Toggle -->
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button>
         <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>

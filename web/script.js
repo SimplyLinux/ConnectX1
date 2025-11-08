@@ -115,14 +115,95 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Download button tracking (optional analytics)
+// Download Modal Functionality
+const downloadModal = document.getElementById('download-modal');
+const modalOverlay = downloadModal.querySelector('.modal-overlay');
+const modalClose = downloadModal.querySelector('.modal-close');
+const modalCancel = downloadModal.querySelector('.modal-cancel');
+const confirmDownloadBtn = document.getElementById('confirm-download');
+
+const macosInstructions = document.getElementById('macos-instructions');
+const windowsInstructions = document.getElementById('windows-instructions');
+const linuxInstructions = document.getElementById('linux-instructions');
+
+let currentDownloadUrl = '';
+let currentPlatform = '';
+
+// Download button handlers
 const downloadButtons = document.querySelectorAll('.download-btn');
 downloadButtons.forEach(button => {
     button.addEventListener('click', (e) => {
-        const platform = button.querySelector('.download-platform').textContent;
-        console.log(`Download started for: ${platform}`);
-        // You can add analytics tracking here if needed
+        e.preventDefault();
+        
+        const downloadUrl = button.getAttribute('href');
+        const platform = button.querySelector('.download-platform').textContent.toLowerCase();
+        
+        currentDownloadUrl = downloadUrl;
+        currentPlatform = platform;
+        
+        // Hide all instructions
+        macosInstructions.style.display = 'none';
+        windowsInstructions.style.display = 'none';
+        linuxInstructions.style.display = 'none';
+        
+        // Show relevant instructions
+        if (platform.includes('macos')) {
+            macosInstructions.style.display = 'block';
+        } else if (platform.includes('windows')) {
+            windowsInstructions.style.display = 'block';
+        } else if (platform.includes('linux')) {
+            linuxInstructions.style.display = 'block';
+        }
+        
+        // Update confirm button
+        confirmDownloadBtn.setAttribute('href', downloadUrl);
+        
+        // Show modal
+        downloadModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     });
+});
+
+// Close modal handlers
+function closeModal() {
+    downloadModal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modalCancel.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', closeModal);
+
+// Confirm download
+confirmDownloadBtn.addEventListener('click', () => {
+    console.log(`Download started for: ${currentPlatform}`);
+    // Modal will stay open so user can read instructions
+    // You can add analytics tracking here if needed
+});
+
+// Copy to clipboard functionality
+const copyButtons = document.querySelectorAll('.copy-btn');
+copyButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const textToCopy = button.getAttribute('data-copy');
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+            button.style.background = '#10b981';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 2000);
+        });
+    });
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && downloadModal.classList.contains('active')) {
+        closeModal();
+    }
 });
 
 // Intersection Observer for fade-in animations
