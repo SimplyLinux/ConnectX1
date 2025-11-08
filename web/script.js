@@ -175,9 +175,19 @@ modalCancel.addEventListener('click', closeModal);
 modalOverlay.addEventListener('click', closeModal);
 
 // Confirm download
-confirmDownloadBtn.addEventListener('click', () => {
+confirmDownloadBtn.addEventListener('click', (e) => {
+    // Don't prevent default - let the browser handle the download
     console.log(`Download started for: ${currentPlatform}`);
-    // Modal will stay open so user can read instructions
+    
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.href = currentDownloadUrl;
+    link.download = currentDownloadUrl.split('/').pop(); // Get filename from URL
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Keep modal open so user can read instructions
     // You can add analytics tracking here if needed
 });
 
