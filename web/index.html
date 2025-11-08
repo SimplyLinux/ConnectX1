@@ -2,14 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="ConnectX1 - Modern SSH management and monitoring application for developers and system administrators">
     <meta name="keywords" content="SSH, SFTP, Terminal, Server Management, Remote Access, DevOps, System Administration">
     <meta name="author" content="ConnectX1 Team">
+    <meta name="theme-color" content="#9333ea">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    
     <title>ConnectX1 - Your Ultimate SSH Command Center</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Apply dark theme immediately -->
+    <script>
+        document.documentElement.classList.add('dark-theme');
+    </script>
+    <style>
+        /* Critical CSS for initial render */
+        body { 
+            margin: 0; 
+            padding-top: 73px;
+            background: #000000;
+            color: #f8fafc;
+        }
+        .navbar { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+        }
+    </style>
 </head>
-<body>
+<body class="dark-theme">
     <!-- Download Instructions Modal -->
     <div id="download-modal" class="modal">
         <div class="modal-overlay"></div>
@@ -126,24 +155,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Floating Theme Toggle -->
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-    </button>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -290,19 +301,19 @@
                 <div class="carousel-container">
                     <div class="carousel-track">
                         <div class="carousel-slide active">
-                            <img src="images/dark.png" alt="ConnectX1 Dark Theme" loading="lazy">
+                            <img src="images/dark.png" alt="ConnectX1 Dark Theme" loading="eager" width="1200" height="800">
                             <div class="carousel-caption">Dark Theme - Main Interface</div>
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/light.png" alt="ConnectX1 Light Theme" loading="lazy">
+                            <img src="images/light.png" alt="ConnectX1 Light Theme" loading="lazy" width="1200" height="800">
                             <div class="carousel-caption">Light Theme - Clean & Professional</div>
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/Local-Termianl-Dark-Theme.png" alt="Local Terminal Dark" loading="lazy">
+                            <img src="images/Local-Termianl-Dark-Theme.png" alt="Local Terminal Dark" loading="lazy" width="1200" height="800">
                             <div class="carousel-caption">Local Terminal - Dark Mode</div>
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/Local-Terminal-Light-Theme.png" alt="Local Terminal Light" loading="lazy">
+                            <img src="images/Local-Terminal-Light-Theme.png" alt="Local Terminal Light" loading="lazy" width="1200" height="800">
                             <div class="carousel-caption">Local Terminal - Light Mode</div>
                         </div>
                     </div>
@@ -501,6 +512,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

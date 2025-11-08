@@ -1,20 +1,4 @@
-// Theme Toggle Functionality
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
-
-// Check for saved theme preference or default to 'light'
-const currentTheme = localStorage.getItem('theme') || 'light';
-if (currentTheme === 'dark') {
-    body.classList.add('dark-theme');
-}
-
-themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-theme');
-    
-    // Save theme preference
-    const theme = body.classList.contains('dark-theme') ? 'dark' : 'light';
-    localStorage.setItem('theme', theme);
-});
+// Dark theme is permanently applied - no toggle needed
 
 // Carousel Functionality
 const carouselTrack = document.querySelector('.carousel-track');
@@ -107,9 +91,17 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            // Close mobile menu if open
+            if (navLinks && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+            }
+            
+            // Smooth scroll with offset for fixed navbar
+            const targetPosition = target.offsetTop - 80;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
             });
         }
     });
@@ -199,7 +191,7 @@ copyButtons.forEach(button => {
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = button.innerHTML;
             button.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
-            button.style.background = '#10b981';
+            button.style.background = '#7c3aed';
             
             setTimeout(() => {
                 button.innerHTML = originalText;
@@ -236,37 +228,83 @@ document.querySelectorAll('.feature-card, .use-case-card, .tech-item').forEach(e
     observer.observe(el);
 });
 
-// Mobile menu toggle (if you want to add mobile menu functionality)
+// Mobile menu toggle
 const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 
-if (mobileMenuToggle) {
+if (mobileMenuToggle && navLinks) {
     mobileMenuToggle.addEventListener('click', () => {
         navLinks.classList.toggle('active');
         mobileMenuToggle.classList.toggle('active');
+        
+        // Prevent body scroll when menu is open
+        if (navLinks.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
     });
-}
-
-// Add active class to current nav link based on scroll position
-window.addEventListener('scroll', () => {
-    const sections = document.querySelectorAll('section[id]');
-    const scrollY = window.pageYOffset;
-
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        const navLink = document.querySelector(`.nav-links a[href="#${sectionId}"]`);
-
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
-            if (navLink) {
-                navLink.classList.add('active');
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!navLinks.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+            if (navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.style.overflow = '';
             }
         }
     });
-});
+}
 
+// Add active class to current nav link based on scroll position (throttled for performance)
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+    if (scrollTimeout) {
+        window.cancelAnimationFrame(scrollTimeout);
+    }
+    
+    scrollTimeout = window.requestAnimationFrame(() => {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollY = window.pageYOffset;
+
+        sections.forEach(section => {
+            const sectionHeight = section.offsetHeight;
+            const sectionTop = section.offsetTop - 150;
+            const sectionId = section.getAttribute('id');
+            const navLink = document.querySelector(`.nav-links a[href="#${sectionId}"]`);
+
+            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                if (navLink) {
+                    navLink.classList.add('active');
+                }
+            }
+        });
+    });
+}, { passive: true });
+
+// Performance optimization: Lazy load images when they come into view
+if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+
+    document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+    });
+}
+
+// Log success message in development
 console.log('ConnectX1 website loaded successfully! 🚀');
