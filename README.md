@@ -79,7 +79,7 @@ Modern SSH management and monitoring application for developers and system admin
 
 ## Platform Support
 
-- macOS (Apple Silicon: M1/M2/M3)
+- macOS (Apple Silicon supported; x86 Intel version coming soon)
 - Windows 10/11
 - Linux (DEB & RPM)
 
