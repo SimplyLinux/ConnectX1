@@ -1,517 +1,1418 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="ConnectX1 - Modern SSH management and monitoring application for developers and system administrators">
-    <meta name="keywords" content="SSH, SFTP, Terminal, Server Management, Remote Access, DevOps, System Administration">
-    <meta name="author" content="ConnectX1 Team">
-    <meta name="theme-color" content="#9333ea">
-    <meta name="color-scheme" content="dark">
-    
-    <!-- Performance optimizations -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    
-    <title>ConnectX1 - Your Ultimate SSH Command Center</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Apply dark theme immediately -->
-    <script>
-        document.documentElement.classList.add('dark-theme');
-    </script>
-    <style>
-        /* Critical CSS for initial render */
-        body { 
-            margin: 0; 
-            padding-top: 73px;
-            background: #000000;
-            color: #f8fafc;
-        }
-        .navbar { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.9);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConnectX1 — Your Ultimate SSH Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* =============================================
+       TOKENS
+    ============================================= */
+    :root {
+      --bg-0: #060609;
+      --bg-1: #0a0a10;
+      --bg-2: #0f0f18;
+      --bg-3: #141420;
+      --bg-glass: rgba(255,255,255,0.028);
+      --bg-hover: rgba(255,255,255,0.05);
+
+      --text-1: #e8eaf0;
+      --text-2: rgba(232,234,240,0.72);
+      --text-3: rgba(232,234,240,0.46);
+      --text-4: rgba(232,234,240,0.28);
+
+      --green: #00ff88;
+      --green-dim: rgba(0,255,136,0.12);
+      --green-glow: rgba(0,255,136,0.25);
+      --teal: #00d4aa;
+      --blue: #3b82f6;
+      --purple: #8b5cf6;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --cyan: #22d3ee;
+
+      --border: rgba(255,255,255,0.065);
+      --border-h: rgba(0,255,136,0.25);
+
+      --grad-brand: linear-gradient(135deg, #00ff88 0%, #00d4aa 50%, #22d3ee 100%);
+      --grad-dark: linear-gradient(135deg, #0a0a10, #0f0f18);
+      --grad-card: linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+      --grad-terminal: linear-gradient(180deg, #0c0c14 0%, #08080f 100%);
+
+      --r-sm: 6px;
+      --r-md: 12px;
+      --r-lg: 18px;
+      --r-xl: 26px;
+      --r-full: 9999px;
+
+      --sh-green: 0 0 40px rgba(0,255,136,0.2);
+      --sh-md: 0 8px 32px rgba(0,0,0,0.6);
+      --sh-lg: 0 24px 80px rgba(0,0,0,0.7);
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font-ui: 'Outfit', sans-serif;
+    }
+
+    /* =============================================
+       RESET
+    ============================================= */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-ui);
+      color: var(--text-1);
+      background: var(--bg-0);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+    ul { list-style: none; }
+    :focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    :focus:not(:focus-visible) { outline: none; }
+
+    /* =============================================
+       BG EFFECTS
+    ============================================= */
+    .bg-layer {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .bg-scan {
+      position: absolute; inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,136,0.012) 2px,
+        rgba(0,255,136,0.012) 4px
+      );
+      pointer-events: none;
+    }
+    .bg-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 65% 55% at 50% 50%, black 25%, transparent 100%);
+    }
+    .bg-radial {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 15% 10%, rgba(0,255,136,0.1) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 45% at 85% 90%, rgba(34,211,238,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,212,170,0.04) 0%, transparent 60%);
+    }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform;
+    }
+    .orb-a { width:550px; height:550px; background:rgba(0,255,136,0.55); opacity:.13; top:-200px; left:-160px; animation: driftA 24s ease-in-out infinite; }
+    .orb-b { width:420px; height:420px; background:rgba(34,211,238,0.6); opacity:.1; bottom:-150px; right:-120px; animation: driftB 30s ease-in-out infinite; }
+    .orb-c { width:280px; height:280px; background:rgba(0,212,170,0.5); opacity:.08; top:45%; left:60%; animation: pulse 20s ease-in-out infinite; }
+    @keyframes driftA { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(50px,70px) scale(1.06)} 66%{transform:translate(-25px,35px) scale(0.95)} }
+    @keyframes driftB { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-45px,-55px) scale(1.05)} 66%{transform:translate(35px,-25px) scale(0.97)} }
+    @keyframes pulse { 0%,100%{opacity:.07;transform:scale(1)} 50%{opacity:.14;transform:scale(1.2)} }
+
+    /* =============================================
+       LAYOUT
+    ============================================= */
+    #app { position: relative; z-index: 1; }
+
+    /* =============================================
+       NAV
+    ============================================= */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(6,6,9,0.8);
+      backdrop-filter: blur(28px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--green);
+    }
+    .nav-logo-mark {
+      width: 34px; height: 34px;
+      background: var(--green-dim);
+      border: 1px solid var(--green-glow);
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: .85rem; font-weight: 700;
+      color: var(--green);
+      box-shadow: 0 0 12px rgba(0,255,136,0.2);
+    }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a {
+      padding: 8px 16px;
+      font-size: .82rem; font-weight: 500;
+      color: var(--text-3);
+      border-radius: var(--r-sm);
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text-1); background: var(--bg-hover); }
+    .nav-links a.active { color: var(--green); }
+    .nav-dl {
+      padding: 9px 20px;
+      background: var(--green);
+      border-radius: var(--r-sm);
+      font-size: .8rem; font-weight: 700;
+      color: #060609 !important;
+      letter-spacing: .02em;
+      transition: box-shadow .25s, transform .2s;
+      box-shadow: 0 0 20px rgba(0,255,136,0.3);
+    }
+    .nav-dl:hover { box-shadow: 0 0 32px rgba(0,255,136,0.5); transform: translateY(-1px); background: var(--green) !important; color: #060609 !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text-3); border-radius: 2px; transition: .3s; }
+
+    /* =============================================
+       PAGES
+    ============================================= */
+    .page { display: none; min-height: 100vh; padding-top: 72px; }
+    .page.active { display: block; animation: fadeUp .5s var(--ease-out) both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 60px 24px 0;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 16px;
+      background: rgba(0,255,136,0.08);
+      border: 1px solid rgba(0,255,136,0.2);
+      border-radius: var(--r-full);
+      font-family: var(--font-mono);
+      font-size: .72rem; font-weight: 600;
+      color: var(--green); letter-spacing: 1.5px;
+      margin-bottom: 30px;
+      animation: fadeUp .6s var(--ease-out) .1s both;
+    }
+    .hero-badge::before { content:''; width:6px; height:6px; background: var(--green); border-radius:50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+    .hero h1 {
+      font-family: var(--font-ui);
+      font-size: clamp(2.6rem, 7vw, 5.8rem);
+      font-weight: 800; line-height: 1.06; letter-spacing: -.03em;
+      max-width: 920px;
+      animation: fadeUp .7s var(--ease-out) .2s both;
+    }
+    .hero h1 .hl {
+      background: var(--grad-brand);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text-3);
+      max-width: 560px; line-height: 1.8; margin: 22px auto 0;
+      animation: fadeUp .7s var(--ease-out) .3s both;
+    }
+    .hero-pills {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      margin-top: 32px;
+      animation: fadeUp .7s var(--ease-out) .35s both;
+    }
+    .pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-full);
+      font-size: .78rem; font-weight: 500; color: var(--text-3);
+    }
+    .pill .dot-pill { width:6px; height:6px; border-radius:50%; }
+    .hero-actions {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      margin-top: 36px;
+      animation: fadeUp .7s var(--ease-out) .4s both;
+    }
+    .btn-primary {
+      padding: 14px 30px;
+      background: var(--green);
+      border-radius: var(--r-md);
+      font-weight: 700; font-size: .9rem; color: #060609;
+      box-shadow: 0 4px 24px rgba(0,255,136,0.3);
+      transition: transform .2s, box-shadow .25s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 40px rgba(0,255,136,0.45); }
+    .btn-ghost {
+      padding: 14px 30px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      font-weight: 600; font-size: .9rem; color: var(--text-2);
+      backdrop-filter: blur(8px);
+      transition: border-color .2s, color .2s, transform .2s;
+    }
+    .btn-ghost:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
+
+    /* Terminal mockup hero */
+    .hero-terminal {
+      margin: 64px auto 0;
+      width: 100%; max-width: 860px;
+      background: var(--grad-terminal);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(0,255,136,0.08), 0 0 60px rgba(0,255,136,0.06);
+      animation: fadeUp .8s var(--ease-out) .5s both;
+    }
+    .term-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 18px;
+      background: rgba(0,0,0,.4);
+      border-bottom: 1px solid var(--border);
+    }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .td-r{background:#ff5f57;} .td-y{background:#febc2e;} .td-g{background:#28c840;}
+    .term-title { font-family: var(--font-mono); font-size: .72rem; color: var(--text-4); margin-left: 6px; }
+    .term-body { padding: 22px 24px; font-family: var(--font-mono); font-size: .8rem; line-height: 2; }
+    .term-line { display: flex; gap: 10px; }
+    .term-prompt { color: var(--green); flex-shrink: 0; }
+    .term-cmd { color: var(--text-2); }
+    .term-out { color: var(--text-3); padding-left: 20px; }
+    .term-out.success { color: var(--green); }
+    .term-out.info { color: var(--cyan); }
+    .term-cursor { display: inline-block; width: 8px; height: 14px; background: var(--green); margin-left: 2px; vertical-align: middle; animation: blink 1.2s infinite; border-radius: 1px; }
+
+    /* Marquee */
+    .marquee-wrap {
+      width: 100%; overflow: hidden; margin-top: 64px; padding-bottom: 64px;
+      mask-image: linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%);
+      animation: fadeUp .8s var(--ease-out) .6s both;
+    }
+    .marquee-track { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+    .marquee-track span { font-family: var(--font-mono); font-size: .7rem; font-weight: 500; color: var(--text-4); text-transform: uppercase; letter-spacing: 2px; padding: 0 18px; white-space: nowrap; }
+    .marquee-track .sep { color: var(--green); opacity: .5; padding: 0 4px; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* =============================================
+       SECTION COMMONS
+    ============================================= */
+    .section { padding: 96px 24px; }
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: .68rem; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--green);
+      margin-bottom: 14px;
+    }
+    .section-label::before { content:'//'; opacity: .5; }
+    .section-title {
+      font-family: var(--font-ui);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800; letter-spacing: -.025em; line-height: 1.15;
+    }
+    .section-sub { font-size: .95rem; color: var(--text-3); margin-top: 12px; max-width: 520px; line-height: 1.8; }
+    .section-head { margin-bottom: 52px; }
+
+    /* =============================================
+       TABS FRAME
+    ============================================= */
+    .tabs-frame {
+      background: var(--grad-card);
+      backdrop-filter: blur(40px);
+      border-radius: var(--r-xl);
+      padding: 36px;
+      border: 1px solid var(--border);
+      box-shadow: var(--sh-lg);
+      position: relative; overflow: hidden;
+    }
+    .tabs-frame::before {
+      content: '';
+      position: absolute; top:0; left:0; right:0; height:1px;
+      background: linear-gradient(90deg, transparent, var(--green), var(--teal), var(--cyan), transparent);
+      opacity: .5;
+    }
+    .tabs-nav {
+      display: flex; gap: 4px; padding: 6px;
+      background: rgba(0,0,0,.55);
+      border-radius: var(--r-lg);
+      position: relative; margin-bottom: 32px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tabs-nav::-webkit-scrollbar { display: none; }
+    .tab-indicator {
+      position: absolute; height: calc(100% - 12px); top: 6px;
+      background: linear-gradient(135deg, var(--green) 0%, var(--teal) 100%);
+      border-radius: var(--r-md);
+      transition: all .45s var(--ease-out);
+      box-shadow: 0 0 24px rgba(0,255,136,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+      z-index: 1; pointer-events: none;
+    }
+    .tab-btn {
+      flex: 1; min-width: 110px;
+      padding: 11px 18px;
+      background: transparent;
+      color: var(--text-3);
+      font-size: .78rem; font-weight: 600;
+      border-radius: var(--r-md);
+      transition: color .2s, background .2s;
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      white-space: nowrap; -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; transition: transform .2s; }
+    .tab-btn:hover svg { transform: scale(1.12); }
+    .tab-btn:hover:not([aria-selected="true"]) { color: var(--text-2); background: var(--bg-hover); }
+    .tab-btn[aria-selected="true"] { color: #060609; }
+
+    /* Panels */
+    .tabs-content { position: relative; min-height: 340px; }
+    .tab-panel {
+      position: absolute; inset: 0;
+      opacity: 0; visibility: hidden; transform: translateY(16px);
+      transition: all .45s var(--ease-out); pointer-events: none;
+    }
+    .tab-panel[aria-hidden="false"] {
+      opacity:1; visibility:visible; transform:none;
+      position:relative; pointer-events:auto;
+    }
+    .panel-card {
+      background: rgba(0,0,0,.3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 32px;
+    }
+    .panel-hd {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 22px; padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-icon {
+      width: 52px; height: 52px; border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      background: var(--green-dim);
+      border: 1px solid var(--green-glow);
+      box-shadow: 0 0 20px rgba(0,255,136,0.1);
+      flex-shrink: 0;
+    }
+    .panel-title { font-family: var(--font-ui); font-size: 1.2rem; font-weight: 700; }
+    .panel-subtitle { font-size: .8rem; color: var(--text-3); margin-top: 2px; font-family: var(--font-mono); }
+    .panel-desc { color: var(--text-2); line-height: 1.8; font-size: .9rem; margin-bottom: 24px; }
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .feat-item {
+      background: rgba(0,0,0,.3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 18px;
+      transition: transform .25s, border-color .25s;
+    }
+    .feat-item:hover { transform: translateY(-3px); border-color: var(--border-h); }
+    .feat-item h4 { font-size: .85rem; font-weight: 600; margin-bottom: 5px; color: var(--text-1); }
+    .feat-item p { font-size: .78rem; color: var(--text-3); margin:0; line-height:1.65; }
+
+    /* =============================================
+       FEATURES PAGE
+    ============================================= */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 20px; }
+    .feat-card {
+      background: var(--grad-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 28px;
+      position: relative; overflow: hidden;
+      transition: transform .25s, border-color .3s, box-shadow .3s;
+    }
+    .feat-card::before {
+      content:''; position:absolute; inset:0; opacity:0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,255,136,0.06) 0%, transparent 70%);
+      transition: opacity .3s;
+    }
+    .feat-card:hover { transform: translateY(-5px); border-color: rgba(0,255,136,0.18); box-shadow: 0 12px 40px rgba(0,255,136,0.07); }
+    .feat-card:hover::before { opacity: 1; }
+    .feat-card-icon { font-size: 1.8rem; margin-bottom: 16px; display: block; }
+    .feat-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+    .feat-card p { font-size: .82rem; color: var(--text-3); line-height: 1.7; margin: 0; }
+
+    /* =============================================
+       SCREENSHOTS PAGE
+    ============================================= */
+    .screenshots-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .screenshot-card {
+      background: var(--grad-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); overflow: hidden;
+      transition: transform .25s, border-color .25s;
+    }
+    .screenshot-card:hover { transform: translateY(-5px); border-color: var(--border-h); }
+    .screenshot-preview {
+      height: 220px; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .screen-mock {
+      width: 90%; height: 90%; border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--sh-md);
+    }
+    .screen-titlebar {
+      display: flex; align-items: center; gap: 6px; padding: 8px 12px;
+      background: rgba(0,0,0,.6);
+      border-bottom: 1px solid var(--border);
+    }
+    .sm-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .screen-content { flex: 1; padding: 10px; }
+    .screen-row { display: flex; gap: 6px; height: 100%; }
+    .screen-sidebar { width: 30%; background: rgba(0,0,0,.3); border-radius: 4px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+    .screen-item { height: 8px; border-radius: 3px; background: rgba(255,255,255,.06); }
+    .screen-item.active { background: rgba(0,255,136,.25); }
+    .screen-main { flex: 1; background: rgba(0,0,0,.2); border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .screen-line { height: 7px; border-radius: 3px; background: rgba(255,255,255,.05); }
+    .screen-line.green { background: rgba(0,255,136,.3); width: 45%; }
+    .screen-line.cyan { background: rgba(34,211,238,.25); width: 65%; }
+    .screen-line.amber { background: rgba(245,158,11,.2); width: 35%; }
+    .screenshot-info { padding: 16px 20px; }
+    .screenshot-info h3 { font-size: .88rem; font-weight: 600; margin-bottom: 4px; }
+    .screenshot-info p { font-size: .78rem; color: var(--text-3); margin: 0; }
+
+    /* Light theme mockup */
+    .light-mock .screen-sidebar { background: rgba(255,255,255,.15); }
+    .light-mock .screen-main { background: rgba(255,255,255,.1); }
+    .light-mock .screen-line { background: rgba(0,0,0,.1); }
+
+    /* =============================================
+       STACK PAGE
+    ============================================= */
+    .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 0; }
+    .stack-card {
+      background: rgba(0,0,0,.3);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 24px 20px;
+      text-align: center;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .stack-card:hover { transform: translateY(-4px); border-color: var(--border-h); box-shadow: var(--sh-green); }
+    .stack-logo { font-size: 2rem; margin-bottom: 12px; display: block; }
+    .stack-name { font-family: var(--font-mono); font-size: .85rem; font-weight: 600; color: var(--text-1); }
+    .stack-desc { font-size: .75rem; color: var(--text-3); margin-top: 4px; }
+    .perf-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+    .perf-card {
+      background: rgba(0,255,136,.06); border: 1px solid rgba(0,255,136,.15);
+      border-radius: var(--r-md); padding: 20px; text-align: center;
+    }
+    .perf-icon { font-size: .85rem; font-family: var(--font-mono); color: var(--green); font-weight: 700; }
+    .perf-label { font-size: .78rem; color: var(--text-3); margin-top: 6px; }
+
+    /* =============================================
+       DOWNLOAD PAGE
+    ============================================= */
+    .dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .dl-card {
+      background: var(--grad-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 36px;
+      text-align: center;
+      position: relative; overflow: hidden;
+      transition: transform .25s, border-color .3s, box-shadow .3s;
+    }
+    .dl-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background: var(--grad-brand); opacity: 0; transition: opacity .3s;
+    }
+    .dl-card:hover { transform: translateY(-6px); border-color: rgba(0,255,136,.2); box-shadow: 0 20px 60px rgba(0,255,136,.1); }
+    .dl-card:hover::before { opacity: 1; }
+    .dl-os-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .dl-card h3 { font-family: var(--font-ui); font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .dl-card p { font-size: .82rem; color: var(--text-3); margin-bottom: 28px; }
+    .dl-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      background: var(--green);
+      border-radius: var(--r-md);
+      font-weight: 700; font-size: .85rem; color: #060609;
+      box-shadow: 0 4px 20px rgba(0,255,136,.25);
+      transition: transform .2s, box-shadow .25s;
+    }
+    .dl-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,255,136,.4); }
+    .dl-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 14px; font-family: var(--font-mono);
+      font-size: .68rem; color: var(--text-4);
+    }
+    .trial-notice {
+      background: rgba(245,158,11,.08);
+      border: 1px solid rgba(245,158,11,.2);
+      border-radius: var(--r-lg); padding: 20px 24px;
+      display: flex; gap: 12px; align-items: flex-start;
+      margin-bottom: 40px;
+    }
+    .trial-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .trial-notice h4 { font-size: .88rem; font-weight: 600; color: var(--amber); margin-bottom: 4px; }
+    .trial-notice p { font-size: .8rem; color: var(--text-3); margin: 0; line-height: 1.65; }
+
+    /* Install steps */
+    .install-tabs { margin-top: 48px; }
+    .install-steps { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .install-step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+    }
+    .step-num {
+      width: 28px; height: 28px; flex-shrink: 0;
+      background: var(--green-dim); border: 1px solid var(--green-glow);
+      border-radius: var(--r-sm);
+      font-family: var(--font-mono); font-size: .78rem; font-weight: 700;
+      color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-text { font-size: .85rem; color: var(--text-2); line-height: 1.6; padding-top: 3px; }
+    .code-inline {
+      display: inline-block; padding: 2px 8px;
+      background: rgba(0,255,136,.08); border: 1px solid rgba(0,255,136,.15);
+      border-radius: 4px;
+      font-family: var(--font-mono); font-size: .78rem; color: var(--green);
+      margin: 4px 0;
+    }
+
+    /* =============================================
+       WHO FOR
+    ============================================= */
+    .who-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .who-card {
+      background: var(--grad-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 28px;
+      transition: transform .25s, border-color .25s;
+    }
+    .who-card:hover { transform: translateY(-4px); border-color: var(--border-h); }
+    .who-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+    .who-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+    .who-card p { font-size: .82rem; color: var(--text-3); line-height: 1.7; margin:0; }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 56px 48px 36px;
+    }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 44px;
+    }
+    .footer-brand p { font-size: .83rem; color: var(--text-3); margin-top: 12px; line-height: 1.75; max-width: 260px; }
+    .footer-socials { display: flex; gap: 10px; margin-top: 18px; }
+    .social-btn {
+      width: 34px; height: 34px;
+      background: rgba(0,0,0,.3); border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; color: var(--text-3);
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .social-btn:hover { background: rgba(0,255,136,.1); border-color: rgba(0,255,136,.3); color: var(--green); }
+    .footer-col h5 { font-family: var(--font-mono); font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--text-4); margin-bottom: 16px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: .83rem; color: var(--text-3); transition: color .2s; }
+    .footer-col ul li a:hover { color: var(--green); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 22px;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+    .footer-bottom p { font-size: .78rem; color: var(--text-4); }
+    .footer-bottom span { font-family: var(--font-mono); font-size: .72rem; color: var(--green); }
+
+    /* =============================================
+       TOAST
+    ============================================= */
+    #toast-wrap {
+      position: fixed; top: 86px; right: 22px; z-index: 999;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+    .toast {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--green), var(--teal));
+      color: #060609; border-radius: var(--r-md);
+      font-weight: 600; font-size: .8rem;
+      box-shadow: var(--sh-md); pointer-events: auto;
+      animation: toastIn .4s var(--ease-out);
+    }
+    .toast.out { animation: toastOut .3s ease forwards; }
+    @keyframes toastIn { from{opacity:0;transform:translateX(60%) scale(.9)} to{opacity:1;transform:none} }
+    @keyframes toastOut { to{opacity:0;transform:translateX(60%) scale(.9)} }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 900px) {
+      nav { padding: 14px 22px; }
+      .nav-links { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column; gap: 8px;
+        position: fixed; inset: 0; top: 62px;
+        background: rgba(6,6,9,.97); backdrop-filter: blur(20px);
+        padding: 36px 28px; z-index: 99;
+        align-items: flex-start;
+      }
+      .nav-links.open a { font-size: 1.1rem; padding: 10px 0; }
+      .hamburger { display: flex; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .tabs-frame { padding: 22px; }
+      .perf-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 540px) {
+      .hero h1 { font-size: 2.3rem; }
+      .footer-top { grid-template-columns: 1fr; }
+      footer { padding: 44px 20px 28px; }
+      .dl-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
 </head>
-<body class="dark-theme">
-    <!-- Download Instructions Modal -->
-    <div id="download-modal" class="modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <button class="modal-close" aria-label="Close modal">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-            
-            <div class="modal-header">
-                <div class="modal-icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                </div>
-                <h2 class="modal-title">Important Installation Instructions</h2>
-            </div>
-            
-            <div class="modal-body">
-                <!-- macOS Instructions -->
-                <div id="macos-instructions" class="instructions-content" style="display: none;">
-                    <div class="warning-box">
-                        <strong>⚠️ Trial Version Notice</strong>
-                        <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly.</p>
-                    </div>
-                    
-                    <h3>macOS Installation Steps:</h3>
-                    <ol>
-                        <li>Download and extract the ZIP file</li>
-                        <li>Move ConnectX1.app to your Applications folder</li>
-                        <li>Open Terminal and run the following command:</li>
-                    </ol>
-                    
-                    <div class="code-block">
-                        <code>sudo xattr -rd com.apple.quarantine /Applications/ConnectX1.app</code>
-                        <button class="copy-btn" data-copy="sudo xattr -rd com.apple.quarantine /Applications/ConnectX1.app">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            Copy
-                        </button>
-                    </div>
-                    
-                    <div class="info-box">
-                        <strong>ℹ️ Why is this needed?</strong>
-                        <p>Since we don't have an Apple Developer account yet, macOS will block the app by default. This command removes the quarantine flag and allows the app to run.</p>
-                    </div>
-                </div>
-                
-                <!-- Windows Instructions -->
-                <div id="windows-instructions" class="instructions-content" style="display: none;">
-                    <div class="warning-box">
-                        <strong>⚠️ Trial Version Notice</strong>
-                        <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly.</p>
-                    </div>
-                    
-                    <h3>Windows Installation Steps:</h3>
-                    <ol>
-                        <li>Download the installer (.exe file)</li>
-                        <li>Run the installer</li>
-                        <li>You may see a Windows SmartScreen warning</li>
-                        <li>Click "More info" and then "Run anyway"</li>
-                    </ol>
-                    
-                    <div class="info-box">
-                        <strong>ℹ️ Why the warning?</strong>
-                        <p>Our application is not yet certified by Microsoft. This is normal for new applications. The warning will disappear once we obtain code signing certificates.</p>
-                    </div>
-                </div>
-                
-                <!-- Linux Instructions -->
-                <div id="linux-instructions" class="instructions-content" style="display: none;">
-                    <div class="warning-box">
-                        <strong>⚠️ Trial Version Notice</strong>
-                        <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly.</p>
-                    </div>
-                    
-                    <h3>Linux Installation Steps:</h3>
-                    <ol>
-                        <li>Download the .deb package</li>
-                        <li>Install using your package manager:</li>
-                    </ol>
-                    
-                    <div class="code-block">
-                        <code>sudo dpkg -i ConnectX1_0.1.1_amd64.deb</code>
-                        <button class="copy-btn" data-copy="sudo dpkg -i ConnectX1_0.1.1_amd64.deb">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            Copy
-                        </button>
-                    </div>
-                    
-                    <p>Or double-click the .deb file to install via Software Center.</p>
-                </div>
-            </div>
-            
-            <div class="modal-footer">
-                <button class="btn-secondary modal-cancel">Cancel</button>
-                <a id="confirm-download" href="#" class="btn-primary" download>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Proceed with Download
-                </a>
-            </div>
-        </div>
-    </div>
+<body>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-content">
-                <div class="logo">
-                    <div class="logo-icon">CX</div>
-                    <span class="logo-text">ConnectX1</span>
-                </div>
-                <div class="nav-links">
-                    <a href="#features">Features</a>
-                    <a href="#screenshots">Screenshots</a>
-                    <a href="#download">Download</a>
-                </div>
-                <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </div>
-    </nav>
+<!-- BG -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-scan"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-radial"></div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+</div>
 
-    <!-- Hero Section -->
+<!-- Toast -->
+<div id="toast-wrap" aria-live="polite"></div>
+<div id="live-region" role="status" aria-live="polite" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" data-page="home">
+    <div class="nav-logo-mark">CX</div>
+    ConnectX1
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="#" data-page="home" class="active">Home</a>
+    <a href="#" data-page="features">Features</a>
+    <a href="#" data-page="screenshots">Screenshots</a>
+    <a href="#" data-page="stack">Tech Stack</a>
+    <a href="#" data-page="download" class="nav-dl">Download</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div id="app">
+
+  <!-- ========= HOME PAGE ========= -->
+  <div class="page active" id="page-home">
     <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-icon">🚀</span>
-                    <span>Modern SSH Management</span>
+      <div class="hero-badge">🚀 Modern SSH Management</div>
+      <h1>Your Ultimate <span class="hl">SSH Command Center</span></h1>
+      <p class="hero-sub">Manage multiple SSH sessions, browse remote files, monitor server health, and edit code — all in one beautiful, secure desktop application.</p>
+      <div class="hero-pills">
+        <div class="pill"><div class="dot-pill" style="background:var(--green)"></div>⚡ Efficient Performance</div>
+        <div class="pill"><div class="dot-pill" style="background:var(--cyan)"></div>🔒 Encrypted & Secure</div>
+        <div class="pill"><div class="dot-pill" style="background:var(--purple)"></div>🎨 Beautiful Design</div>
+      </div>
+      <div class="hero-actions">
+        <a href="#" class="btn-primary" data-page="download">Download Now</a>
+        <a href="#" class="btn-ghost" data-page="features">Explore Features</a>
+      </div>
+
+      <!-- Terminal Mockup -->
+      <div class="hero-terminal" role="img" aria-label="ConnectX1 terminal preview">
+        <div class="term-bar">
+          <div class="term-dot td-r"></div>
+          <div class="term-dot td-y"></div>
+          <div class="term-dot td-g"></div>
+          <span class="term-title">ConnectX1 — prod-server-01 (ubuntu@192.168.1.100)</span>
+        </div>
+        <div class="term-body">
+          <div class="term-line"><span class="term-prompt">ubuntu@prod-01:~$</span><span class="term-cmd"> ssh deploy@staging.company.io</span></div>
+          <div class="term-out info">Welcome to ConnectX1 Multi-Session Workspace</div>
+          <div class="term-out">Connecting to staging.company.io... ✓ authenticated</div>
+          <div class="term-line" style="margin-top:6px;"><span class="term-prompt">deploy@staging:~$</span><span class="term-cmd"> ./deploy.sh --env=production</span></div>
+          <div class="term-out success">▶  Building Docker image... done in 4.2s</div>
+          <div class="term-out success">▶  Running migrations... 3 applied</div>
+          <div class="term-out success">▶  Health check passed — deployment complete ✓</div>
+          <div class="term-line" style="margin-top:6px;"><span class="term-prompt">deploy@staging:~$</span><span class="term-cmd"> htop</span><span class="term-cursor"></span></div>
+        </div>
+      </div>
+
+      <!-- Marquee -->
+      <div class="marquee-wrap">
+        <div class="marquee-track" aria-hidden="true">
+          <span>SSH Management</span><span class="sep">✦</span>
+          <span>SFTP File Browser</span><span class="sep">✦</span>
+          <span>Real-Time Metrics</span><span class="sep">✦</span>
+          <span>Monaco Code Editor</span><span class="sep">✦</span>
+          <span>Multi-Session Tabs</span><span class="sep">✦</span>
+          <span>Enterprise Security</span><span class="sep">✦</span>
+          <span>Rust Backend</span><span class="sep">✦</span>
+          <span>React 19</span><span class="sep">✦</span>
+          <span>Tauri 2.0</span><span class="sep">✦</span>
+          <span>9 Accent Themes</span><span class="sep">✦</span>
+          <span>SSH Management</span><span class="sep">✦</span>
+          <span>SFTP File Browser</span><span class="sep">✦</span>
+          <span>Real-Time Metrics</span><span class="sep">✦</span>
+          <span>Monaco Code Editor</span><span class="sep">✦</span>
+          <span>Multi-Session Tabs</span><span class="sep">✦</span>
+          <span>Enterprise Security</span><span class="sep">✦</span>
+          <span>Rust Backend</span><span class="sep">✦</span>
+          <span>React 19</span><span class="sep">✦</span>
+          <span>Tauri 2.0</span><span class="sep">✦</span>
+          <span>9 Accent Themes</span><span class="sep">✦</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Who it's for -->
+    <section class="section" style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-head" style="text-align:center;max-width:560px;margin:0 auto 52px;">
+          <div class="section-label" style="justify-content:center;">Perfect For</div>
+          <h2 class="section-title">Built for Professionals Who Demand the Best</h2>
+        </div>
+        <div class="who-grid">
+          <div class="who-card"><span class="who-icon">👨‍💻</span><h3>DevOps Engineers</h3><p>Manage multiple production servers, monitor metrics, and deploy with confidence from a single interface.</p></div>
+          <div class="who-card"><span class="who-icon">🔧</span><h3>System Administrators</h3><p>Monitor server health, manage services, and troubleshoot issues in real-time with live dashboards.</p></div>
+          <div class="who-card"><span class="who-icon">💼</span><h3>Full-Stack Developers</h3><p>Edit code, deploy applications, and debug on remote servers seamlessly with the built-in Monaco editor.</p></div>
+          <div class="who-card"><span class="who-icon">☁️</span><h3>Cloud Engineers</h3><p>Handle AWS, Azure, and GCP instances with ease. All clouds, one beautiful interface.</p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========= FEATURES PAGE (TABS PRO) ========= -->
+  <div class="page" id="page-features">
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="section-label">Capabilities</div>
+          <h2 class="section-title">Powerful Features</h2>
+          <p class="section-sub">Everything you need to manage remote servers efficiently — from terminal to file browser to live metrics.</p>
+        </div>
+
+        <div class="tabs-frame">
+          <div class="tabs-nav" role="tablist" aria-label="Feature categories" id="featNav">
+            <div class="tab-indicator" id="featIndicator" aria-hidden="true"></div>
+            <button class="tab-btn" role="tab" aria-selected="true" aria-controls="feat-terminal" id="tab-terminal" tabindex="0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15l5-5-5-5M13 15h4"/></svg>
+              Terminal
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="feat-sftp" id="tab-sftp" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              File Manager
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="feat-monitor" id="tab-monitor" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Monitoring
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="feat-editor" id="tab-editor" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Code Editor
+            </button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="feat-security" id="tab-security" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Security
+            </button>
+          </div>
+          <div class="tabs-content">
+            <!-- Terminal -->
+            <section class="tab-panel" role="tabpanel" id="feat-terminal" aria-labelledby="tab-terminal" aria-hidden="false">
+              <div class="panel-card">
+                <div class="panel-hd">
+                  <div class="panel-icon">💻</div>
+                  <div>
+                    <h2 class="panel-title">Professional Terminal</h2>
+                    <p class="panel-subtitle">// full-featured · search · auto-reconnect</p>
+                  </div>
                 </div>
-                <h1 class="hero-title">
-                    Your Ultimate
-                    <span class="gradient-text">SSH Command Center</span>
-                </h1>
-                <p class="hero-description">
-                    Manage multiple SSH sessions, browse remote files, monitor server health, and edit code - all in one beautiful, secure desktop application.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#download" class="btn btn-primary">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Download Now
-                    </a>
-                    <a href="#features" class="btn btn-secondary">
-                        Learn More
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
+                <p class="panel-desc">Full-featured terminal with search, auto-reconnect, and smooth performance. Support for both SSH and local sessions. Built on xterm.js with Rust-powered backend for native-speed I/O.</p>
+                <div class="feat-grid">
+                  <div class="feat-item"><h4>SSH & Local Sessions</h4><p>Seamlessly manage both remote SSH and local terminal sessions in one interface</p></div>
+                  <div class="feat-item"><h4>In-Terminal Search</h4><p>Full-text search through terminal history with regex and case-sensitivity support</p></div>
+                  <div class="feat-item"><h4>Auto-Reconnect</h4><p>Automatically reconnects dropped sessions — never lose your working context</p></div>
+                  <div class="feat-item"><h4>Multi-Session Tabs</h4><p>Open unlimited SSH sessions simultaneously and switch between them instantly</p></div>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-value">⚡ Efficient</div>
-                        <div class="stat-label">Performance</div>
+              </div>
+            </section>
+            <!-- SFTP -->
+            <section class="tab-panel" role="tabpanel" id="feat-sftp" aria-labelledby="tab-sftp" aria-hidden="true">
+              <div class="panel-card">
+                <div class="panel-hd">
+                  <div class="panel-icon">📁</div>
+                  <div>
+                    <h2 class="panel-title">SFTP File Manager</h2>
+                    <p class="panel-subtitle">// dual-pane · batch ops · conflict resolution</p>
+                  </div>
+                </div>
+                <p class="panel-desc">Dual-pane file browser with real-time transfers, batch operations, and conflict resolution. Manage remote files as naturally as local ones — drag, drop, rename, and diff.</p>
+                <div class="feat-grid">
+                  <div class="feat-item"><h4>Dual-Pane Browser</h4><p>View local and remote filesystems side by side for effortless drag-and-drop transfers</p></div>
+                  <div class="feat-item"><h4>Batch Operations</h4><p>Upload, download, or delete hundreds of files simultaneously with progress tracking</p></div>
+                  <div class="feat-item"><h4>Conflict Resolution</h4><p>Smart prompts when files clash — overwrite, skip, or rename with one click</p></div>
+                  <div class="feat-item"><h4>Real-Time Transfers</h4><p>Live transfer speeds, ETA, and queue management for all active operations</p></div>
+                </div>
+              </div>
+            </section>
+            <!-- Monitor -->
+            <section class="tab-panel" role="tabpanel" id="feat-monitor" aria-labelledby="tab-monitor" aria-hidden="true">
+              <div class="panel-card">
+                <div class="panel-hd">
+                  <div class="panel-icon">📊</div>
+                  <div>
+                    <h2 class="panel-title">Real-Time Insights</h2>
+                    <p class="panel-subtitle">// cpu · memory · network · services</p>
+                  </div>
+                </div>
+                <p class="panel-desc">Monitor CPU, memory, network, and services with beautiful interactive graphs and live metrics. Get instant alerts on anomalies before they become incidents.</p>
+                <div class="feat-grid">
+                  <div class="feat-item"><h4>CPU & Memory</h4><p>Live graphs with historical context — spot spikes and trends at a glance</p></div>
+                  <div class="feat-item"><h4>Network I/O</h4><p>Real-time bandwidth monitoring per interface with cumulative stats</p></div>
+                  <div class="feat-item"><h4>Service Status</h4><p>Monitor systemd services, Docker containers, and process health live</p></div>
+                  <div class="feat-item"><h4>Disk Usage</h4><p>Interactive disk usage breakdowns with mount-point level detail</p></div>
+                </div>
+              </div>
+            </section>
+            <!-- Editor -->
+            <section class="tab-panel" role="tabpanel" id="feat-editor" aria-labelledby="tab-editor" aria-hidden="true">
+              <div class="panel-card">
+                <div class="panel-hd">
+                  <div class="panel-icon">🎨</div>
+                  <div>
+                    <h2 class="panel-title">Code Editor</h2>
+                    <p class="panel-subtitle">// monaco editor · 100+ languages · remote edit</p>
+                  </div>
+                </div>
+                <p class="panel-desc">Built-in Monaco Editor — the same engine powering VS Code — with syntax highlighting for 100+ languages. Edit remote files seamlessly without leaving your SSH session.</p>
+                <div class="feat-grid">
+                  <div class="feat-item"><h4>Monaco Engine</h4><p>VS Code's editor engine brings IntelliSense, minimap, and multi-cursor editing</p></div>
+                  <div class="feat-item"><h4>100+ Languages</h4><p>Full syntax highlighting from Python to Rust, YAML to HCL, and everything between</p></div>
+                  <div class="feat-item"><h4>Remote Edit</h4><p>Open and save files directly over SFTP — no downloads, no local copies needed</p></div>
+                  <div class="feat-item"><h4>Diff View</h4><p>Side-by-side diff viewer for comparing local and remote file versions</p></div>
+                </div>
+              </div>
+            </section>
+            <!-- Security -->
+            <section class="tab-panel" role="tabpanel" id="feat-security" aria-labelledby="tab-security" aria-hidden="true">
+              <div class="panel-card">
+                <div class="panel-hd">
+                  <div class="panel-icon">🔐</div>
+                  <div>
+                    <h2 class="panel-title">Enterprise Security</h2>
+                    <p class="panel-subtitle">// master password · encryption · auto-lock</p>
+                  </div>
+                </div>
+                <p class="panel-desc">Master password protection, AES-256 encryption, auto-lock, and secure credential storage. Your server credentials never leave your device unencrypted.</p>
+                <div class="feat-grid">
+                  <div class="feat-item"><h4>Master Password</h4><p>Single master password protects all stored credentials and session data</p></div>
+                  <div class="feat-item"><h4>AES-256 Encryption</h4><p>All stored data encrypted at rest using industry-standard AES-256 cipher</p></div>
+                  <div class="feat-item"><h4>Auto-Lock</h4><p>Configurable inactivity timeout automatically locks the application</p></div>
+                  <div class="feat-item"><h4>SSH Key Management</h4><p>Securely store and organize SSH private keys with passphrase support</p></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Full feature cards below tabs -->
+        <div style="margin-top:48px;">
+          <div class="section-label">All Features</div>
+          <div class="features-grid" style="margin-top:20px;">
+            <div class="feat-card"><span class="feat-card-icon">🗂️</span><h3>Smart Organization</h3><p>Organize servers into folders, quick search, and context menus for rapid access to your entire fleet.</p></div>
+            <div class="feat-card"><span class="feat-card-icon">🖥️</span><h3>Multi-Session Workspace</h3><p>Open multiple SSH sessions simultaneously. Switch between servers instantly without losing context.</p></div>
+            <div class="feat-card"><span class="feat-card-icon">⚡</span><h3>High Performance</h3><p>Built with Rust and React. Native desktop performance with optimized initialization and instant search.</p></div>
+            <div class="feat-card"><span class="feat-card-icon">🎯</span><h3>Fully Customizable</h3><p>Dark/Light themes, 9 accent colors, adjustable zoom, and flexible layouts to match your workflow.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========= SCREENSHOTS PAGE ========= -->
+  <div class="page" id="page-screenshots">
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="section-label">Visual Tour</div>
+          <h2 class="section-title">See It In Action</h2>
+          <p class="section-sub">Beautiful interface that makes complex tasks simple. Available in dark and light themes.</p>
+        </div>
+        <div class="screenshots-grid">
+          <div class="screenshot-card">
+            <div class="screenshot-preview" style="background:linear-gradient(135deg,rgba(0,255,136,.06),rgba(0,212,170,.04));">
+              <div class="screen-mock">
+                <div class="screen-titlebar">
+                  <div class="sm-dot" style="background:#ff5f57;"></div>
+                  <div class="sm-dot" style="background:#febc2e;"></div>
+                  <div class="sm-dot" style="background:#28c840;"></div>
+                </div>
+                <div class="screen-content">
+                  <div class="screen-row">
+                    <div class="screen-sidebar">
+                      <div class="screen-item active"></div>
+                      <div class="screen-item"></div>
+                      <div class="screen-item"></div>
+                      <div class="screen-item"></div>
+                      <div class="screen-item"></div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-value">🔒 Secure</div>
-                        <div class="stat-label">Encrypted</div>
+                    <div class="screen-main">
+                      <div class="screen-line green"></div>
+                      <div class="screen-line"></div>
+                      <div class="screen-line cyan"></div>
+                      <div class="screen-line"></div>
+                      <div class="screen-line green" style="width:30%;"></div>
+                      <div class="screen-line amber"></div>
+                      <div class="screen-line"></div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-value">🎨 Beautiful</div>
-                        <div class="stat-label">Design</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="screenshot-info">
+              <h3>Dark Theme — Main Interface</h3>
+              <p>Multi-session workspace with server sidebar and terminal pane</p>
+            </div>
+          </div>
+
+          <div class="screenshot-card">
+            <div class="screenshot-preview" style="background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(200,200,240,.03));">
+              <div class="screen-mock light-mock" style="background:rgba(255,255,255,.06);">
+                <div class="screen-titlebar" style="background:rgba(255,255,255,.1);">
+                  <div class="sm-dot" style="background:#ff5f57;"></div>
+                  <div class="sm-dot" style="background:#febc2e;"></div>
+                  <div class="sm-dot" style="background:#28c840;"></div>
+                </div>
+                <div class="screen-content">
+                  <div class="screen-row">
+                    <div class="screen-sidebar">
+                      <div class="screen-item active" style="background:rgba(0,150,80,.4);"></div>
+                      <div class="screen-item"></div>
+                      <div class="screen-item"></div>
+                      <div class="screen-item"></div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Powerful Features</h2>
-                <p class="section-description">Everything you need to manage remote servers efficiently</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">💻</div>
-                    <h3 class="feature-title">Professional Terminal</h3>
-                    <p class="feature-description">Full-featured terminal with search, auto-reconnect, and smooth performance. Support for both SSH and local sessions.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📁</div>
-                    <h3 class="feature-title">SFTP File Manager</h3>
-                    <p class="feature-description">Dual-pane file browser with real-time transfers, batch operations, and conflict resolution.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3 class="feature-title">Real-Time Insights</h3>
-                    <p class="feature-description">Monitor CPU, memory, network, and services with beautiful interactive graphs and live metrics.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3 class="feature-title">Code Editor</h3>
-                    <p class="feature-description">Built-in Monaco Editor with syntax highlighting for 100+ languages. Edit remote files seamlessly.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🗂️</div>
-                    <h3 class="feature-title">Smart Organization</h3>
-                    <p class="feature-description">Organize servers into folders, quick search, and context menus for rapid access.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔐</div>
-                    <h3 class="feature-title">Enterprise Security</h3>
-                    <p class="feature-description">Master password protection, encryption, auto-lock, and secure credential storage.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🖥️</div>
-                    <h3 class="feature-title">Multi-Session Workspace</h3>
-                    <p class="feature-description">Open multiple SSH sessions simultaneously. Switch between servers instantly without losing context.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3 class="feature-title">High Performance</h3>
-                    <p class="feature-description">Built with Rust and React. Native desktop performance with optimized initialization and instant search.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3 class="feature-title">Customizable</h3>
-                    <p class="feature-description">Dark/Light themes, 9 accent colors, adjustable zoom, and flexible layouts to match your workflow.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Screenshots Section -->
-    <section id="screenshots" class="screenshots">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">See It In Action</h2>
-                <p class="section-description">Beautiful interface that makes complex tasks simple</p>
-            </div>
-            <div class="carousel">
-                <button class="carousel-btn carousel-prev" aria-label="Previous screenshot">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                    </svg>
-                </button>
-                <div class="carousel-container">
-                    <div class="carousel-track">
-                        <div class="carousel-slide active">
-                            <img src="images/dark.png" alt="ConnectX1 Dark Theme" loading="eager" width="1200" height="800">
-                            <div class="carousel-caption">Dark Theme - Main Interface</div>
-                        </div>
-                        <div class="carousel-slide">
-                            <img src="images/light.png" alt="ConnectX1 Light Theme" loading="lazy" width="1200" height="800">
-                            <div class="carousel-caption">Light Theme - Clean & Professional</div>
-                        </div>
-                        <div class="carousel-slide">
-                            <img src="images/Local-Termianl-Dark-Theme.png" alt="Local Terminal Dark" loading="lazy" width="1200" height="800">
-                            <div class="carousel-caption">Local Terminal - Dark Mode</div>
-                        </div>
-                        <div class="carousel-slide">
-                            <img src="images/Local-Terminal-Light-Theme.png" alt="Local Terminal Light" loading="lazy" width="1200" height="800">
-                            <div class="carousel-caption">Local Terminal - Light Mode</div>
-                        </div>
+                    <div class="screen-main">
+                      <div class="screen-line" style="background:rgba(0,0,0,.12);width:60%;"></div>
+                      <div class="screen-line" style="background:rgba(0,0,0,.08);"></div>
+                      <div class="screen-line" style="background:rgba(0,150,80,.3);width:40%;"></div>
+                      <div class="screen-line" style="background:rgba(0,0,0,.08);width:75%;"></div>
+                      <div class="screen-line" style="background:rgba(0,0,0,.05);"></div>
                     </div>
+                  </div>
                 </div>
-                <button class="carousel-btn carousel-next" aria-label="Next screenshot">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                </button>
-                <div class="carousel-dots"></div>
+              </div>
             </div>
-        </div>
-    </section>
+            <div class="screenshot-info">
+              <h3>Light Theme — Clean & Professional</h3>
+              <p>Full light mode with crisp typography and soft contrast</p>
+            </div>
+          </div>
 
-    <!-- Use Cases Section -->
-    <section class="use-cases">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Perfect For</h2>
-                <p class="section-description">Built for professionals who demand the best</p>
-            </div>
-            <div class="use-cases-grid">
-                <div class="use-case-card">
-                    <div class="use-case-icon">👨‍💻</div>
-                    <h3>DevOps Engineers</h3>
-                    <p>Manage multiple production servers, monitor metrics, and deploy with confidence.</p>
+          <div class="screenshot-card">
+            <div class="screenshot-preview" style="background:linear-gradient(135deg,rgba(0,255,136,.04),rgba(34,211,238,.03));">
+              <div class="screen-mock">
+                <div class="screen-titlebar">
+                  <div class="sm-dot" style="background:#ff5f57;"></div>
+                  <div class="sm-dot" style="background:#febc2e;"></div>
+                  <div class="sm-dot" style="background:#28c840;"></div>
                 </div>
-                <div class="use-case-card">
-                    <div class="use-case-icon">🔧</div>
-                    <h3>System Administrators</h3>
-                    <p>Monitor server health, manage services, and troubleshoot issues in real-time.</p>
-                </div>
-                <div class="use-case-card">
-                    <div class="use-case-icon">💼</div>
-                    <h3>Full-Stack Developers</h3>
-                    <p>Edit code, deploy applications, and debug on remote servers seamlessly.</p>
-                </div>
-                <div class="use-case-card">
-                    <div class="use-case-icon">☁️</div>
-                    <h3>Cloud Engineers</h3>
-                    <p>Handle AWS, Azure, GCP instances with ease. All clouds, one interface.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Tech Stack Section -->
-    <section class="tech-stack">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Built With Modern Technology</h2>
-                <p class="section-description">Cutting-edge stack for maximum performance</p>
-            </div>
-            <div class="tech-grid">
-                <div class="tech-item">
-                    <div class="tech-name">Tauri 2.0</div>
-                    <div class="tech-desc">Rust Backend</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-name">React 19</div>
-                    <div class="tech-desc">Modern UI</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-name">TypeScript</div>
-                    <div class="tech-desc">Type Safety</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-name">xterm.js</div>
-                    <div class="tech-desc">Terminal</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-name">Monaco Editor</div>
-                    <div class="tech-desc">Code Editor</div>
-                </div>
-                <div class="tech-item">
-                    <div class="tech-name">Zustand</div>
-                    <div class="tech-desc">State Management</div>
-                </div>
-            </div>
-            <div class="performance-metrics">
-                <div class="metric">
-                    <div class="metric-value">⚡ Instant</div>
-                    <div class="metric-label">Terminal Ready</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">🚀 Smooth</div>
-                    <div class="metric-label">State Management</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">💨 Quick</div>
-                    <div class="metric-label">Workspace Switching</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Download Section -->
-    <section id="download" class="download">
-        <div class="container">
-            <div class="download-content">
-                <h2 class="download-title">Ready to Transform Your Workflow?</h2>
-                <p class="download-description">Download ConnectX1 for your platform and experience the future of SSH management</p>
-                <div class="download-buttons">
-                    <a href="downloads/ConnectX1-macOS-arm64.zip" class="download-btn" download>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                        </svg>
-                        <div>
-                            <div class="download-platform">macOS</div>
-                           <div class="download-info">M-Series (<em>x86 coming soon</em>)</div>
-                        </div>
-                    </a>
-                    <a href="downloads/ConnectX1_x64-setup.exe" class="download-btn" download>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
-                        </svg>
-                        <div>
-                            <div class="download-platform">Windows</div>
-                            <div class="download-info">Windows 10/11 (x64)</div>
-                        </div>
-                    </a>
-                    <a href="downloads/ConnectX1_amd64.deb" class="download-btn" download>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.84-.415 1.917-.331 2.942.403 4.938 2.997 6.597 5.031 6.597 1.053 0 2.032-.4 3.226-.4 1.16 0 2.137.4 3.226.4 2.034 0 4.628-1.659 5.031-6.597.084-1.025-.053-2.103-.331-2.942-.589-1.771-1.831-3.47-2.716-4.521-.75-1.067-.974-1.928-1.05-3.02-.065-1.491 1.056-5.965-3.17-6.298-.165-.013-.325-.021-.48-.021zm-.005 2.024c.075 0 .15.003.226.008 2.091.166 1.437 2.62 1.488 3.654.059.892.234 1.438.768 2.202.534.764 1.484 2.137 1.956 3.514.236.689.346 1.39.288 2.009-.288 3.09-1.697 4.189-2.959 4.189-.844 0-1.496-.315-2.226-.315-.73 0-1.382.315-2.226.315-1.262 0-2.671-1.099-2.959-4.189-.058-.619.052-1.32.288-2.009.472-1.377 1.422-2.75 1.956-3.514.534-.764.709-1.31.768-2.202.051-1.034-.603-3.488 1.488-3.654.076-.005.151-.008.226-.008z"/>
-                        </svg>
-                        <div>
-                            <div class="download-platform">Linux</div>
-                            <div class="download-info">Debian/Ubuntu (DEB)</div>
-                        </div>
-                    </a>
-                </div>
-                <!-- <p class="download-note">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    Free and open source. No credit card required.
-                </p> -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <div class="logo-icon">CX</div>
-                        <span class="logo-text">ConnectX1</span>
+                <div class="screen-content" style="padding:6px;">
+                  <div style="display:flex;gap:5px;height:100%;">
+                    <div style="flex:1;background:rgba(0,0,0,.3);border-radius:4px;padding:6px;display:flex;flex-direction:column;gap:4px;">
+                      <div style="font-family:var(--font-mono);font-size:.5rem;color:var(--green);opacity:.7;">local ~/projects</div>
+                      <div class="screen-line" style="width:80%;height:5px;"></div>
+                      <div class="screen-line" style="width:60%;height:5px;background:rgba(0,255,136,.25);"></div>
+                      <div class="screen-line" style="width:70%;height:5px;"></div>
+                      <div class="screen-line" style="width:55%;height:5px;"></div>
                     </div>
-                    <p class="footer-tagline">Your Ultimate SSH Command Center</p>
-                    <p class="footer-love">Crafted with <span class="heart">❤️</span> by ConnectX1 Team</p>
+                    <div style="flex:1;background:rgba(0,0,0,.2);border-radius:4px;padding:6px;display:flex;flex-direction:column;gap:4px;">
+                      <div style="font-family:var(--font-mono);font-size:.5rem;color:var(--cyan);opacity:.7;">remote /var/www</div>
+                      <div class="screen-line" style="width:75%;height:5px;"></div>
+                      <div class="screen-line" style="width:65%;height:5px;"></div>
+                      <div class="screen-line" style="width:80%;height:5px;background:rgba(34,211,238,.2);"></div>
+                      <div class="screen-line" style="width:50%;height:5px;"></div>
+                    </div>
+                  </div>
                 </div>
-                <div class="footer-column">
-                    <h4>Product</h4>
-                    <a href="#features">Features</a>
-                    <a href="#screenshots">Screenshots</a>
-                    <a href="#download">Download</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Resources</h4>
-                    <a href="#">Documentation</a>
-                    <a href="#">Release Notes</a>
-                    <a href="#">Support</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Community</h4>
-                    <a href="#">Discord</a>
-                    <a href="#">Twitter</a>
-                    <a href="#">LinkedIn</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Legal</h4>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">License</a>
-                </div>
+              </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 ConnectX1. All rights reserved.</p>
-                <div class="footer-social">
-                    <a href="#" aria-label="Twitter">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
-                        </svg>
-                    </a>
-                    <a href="#" aria-label="LinkedIn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                        </svg>
-                    </a>
-                </div>
+            <div class="screenshot-info">
+              <h3>SFTP — Dual Pane File Manager</h3>
+              <p>Local and remote filesystems side-by-side for effortless transfers</p>
             </div>
-        </div>
-    </footer>
+          </div>
 
-    <script src="script.js" defer></script>
+          <div class="screenshot-card">
+            <div class="screenshot-preview" style="background:linear-gradient(135deg,rgba(0,212,170,.05),rgba(0,255,136,.03));">
+              <div class="screen-mock light-mock" style="background:rgba(255,255,255,.05);">
+                <div class="screen-titlebar" style="background:rgba(255,255,255,.08);">
+                  <div class="sm-dot" style="background:#ff5f57;"></div>
+                  <div class="sm-dot" style="background:#febc2e;"></div>
+                  <div class="sm-dot" style="background:#28c840;"></div>
+                </div>
+                <div class="screen-content" style="padding:8px;">
+                  <div style="display:flex;flex-direction:column;gap:5px;height:100%;">
+                    <div style="font-family:var(--font-mono);font-size:.5rem;color:var(--green);opacity:.6;">$ local terminal</div>
+                    <div style="background:rgba(0,0,0,.3);border-radius:3px;height:6px;"></div>
+                    <div style="background:rgba(0,255,136,.2);border-radius:3px;height:6px;width:70%;"></div>
+                    <div style="background:rgba(0,0,0,.15);border-radius:3px;height:6px;width:85%;"></div>
+                    <div style="background:rgba(34,211,238,.15);border-radius:3px;height:6px;width:55%;"></div>
+                    <div style="background:rgba(0,0,0,.15);border-radius:3px;height:6px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="screenshot-info">
+              <h3>Local Terminal — Light Mode</h3>
+              <p>Full local shell support with the same powerful feature set</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========= TECH STACK PAGE ========= -->
+  <div class="page" id="page-stack">
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <div class="section-label">Under the Hood</div>
+          <h2 class="section-title">Built With Modern Technology</h2>
+          <p class="section-sub">Cutting-edge stack for maximum performance, reliability, and developer experience.</p>
+        </div>
+        <div class="stack-grid">
+          <div class="stack-card"><span class="stack-logo">⚡</span><div class="stack-name">Tauri 2.0</div><div class="stack-desc">Native desktop shell</div></div>
+          <div class="stack-card"><span class="stack-logo">🦀</span><div class="stack-name">Rust</div><div class="stack-desc">Backend engine</div></div>
+          <div class="stack-card"><span class="stack-logo">⚛️</span><div class="stack-name">React 19</div><div class="stack-desc">Modern UI framework</div></div>
+          <div class="stack-card"><span class="stack-logo">📘</span><div class="stack-name">TypeScript</div><div class="stack-desc">Type safety</div></div>
+          <div class="stack-card"><span class="stack-logo">🖥️</span><div class="stack-name">xterm.js</div><div class="stack-desc">Terminal rendering</div></div>
+          <div class="stack-card"><span class="stack-logo">📝</span><div class="stack-name">Monaco Editor</div><div class="stack-desc">Code editor engine</div></div>
+          <div class="stack-card"><span class="stack-logo">🐻</span><div class="stack-name">Zustand</div><div class="stack-desc">State management</div></div>
+          <div class="stack-card"><span class="stack-logo">🔒</span><div class="stack-name">AES-256</div><div class="stack-desc">Data encryption</div></div>
+        </div>
+        <div class="perf-grid">
+          <div class="perf-card"><div class="perf-icon">⚡ Instant</div><div class="perf-label">Terminal Ready</div></div>
+          <div class="perf-card"><div class="perf-icon">🚀 Smooth</div><div class="perf-label">State Management</div></div>
+          <div class="perf-card"><div class="perf-icon">💨 Quick</div><div class="perf-label">Workspace Switching</div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========= DOWNLOAD PAGE ========= -->
+  <div class="page" id="page-download">
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head" style="text-align:center;max-width:580px;margin:0 auto 40px;">
+          <div class="section-label" style="justify-content:center;">Get ConnectX1</div>
+          <h2 class="section-title">Ready to Transform Your Workflow?</h2>
+          <p class="section-sub">Download ConnectX1 for your platform and experience the future of SSH management.</p>
+        </div>
+
+        <div class="trial-notice">
+          <div class="trial-icon">⚠️</div>
+          <div>
+            <h4>Trial Version Notice</h4>
+            <p>ConnectX1 is currently in trial period. Your session data may be erased during updates. Please backup your server configurations regularly before installing any new version.</p>
+          </div>
+        </div>
+
+        <div class="dl-grid">
+          <!-- macOS -->
+          <div class="dl-card">
+            <span class="dl-os-icon">🍎</span>
+            <h3>macOS</h3>
+            <p>M-Series Apple Silicon<br><em style="font-size:.75rem;color:var(--text-4);">x86 support coming soon</em></p>
+            <a href="https://connectx1.pages.dev/downloads/ConnectX1-macOS-arm64.zip" class="dl-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download ZIP
+            </a>
+            <div class="dl-badge">⬇ ConnectX1-macOS-arm64.zip</div>
+          </div>
+          <!-- Windows -->
+          <div class="dl-card">
+            <span class="dl-os-icon">🪟</span>
+            <h3>Windows</h3>
+            <p>Windows 10/11 (x64)<br><em style="font-size:.75rem;color:var(--text-4);">64-bit installer</em></p>
+            <a href="https://connectx1.pages.dev/downloads/ConnectX1_x64-setup.exe" class="dl-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download EXE
+            </a>
+            <div class="dl-badge">⬇ ConnectX1_x64-setup.exe</div>
+          </div>
+          <!-- Linux -->
+          <div class="dl-card">
+            <span class="dl-os-icon">🐧</span>
+            <h3>Linux</h3>
+            <p>Debian / Ubuntu<br><em style="font-size:.75rem;color:var(--text-4);">amd64 DEB package</em></p>
+            <a href="https://connectx1.pages.dev/downloads/ConnectX1_amd64.deb" class="dl-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download DEB
+            </a>
+            <div class="dl-badge">⬇ ConnectX1_amd64.deb</div>
+          </div>
+        </div>
+
+        <!-- Install Instructions Tabs -->
+        <div class="install-tabs">
+          <div class="section-label">Installation Guide</div>
+          <div class="tabs-frame" style="margin-top:20px;">
+            <div class="tabs-nav" role="tablist" aria-label="OS install guides" id="installNav">
+              <div class="tab-indicator" id="installIndicator" aria-hidden="true"></div>
+              <button class="tab-btn" role="tab" aria-selected="true" aria-controls="install-mac" id="itab-mac" tabindex="0">🍎 macOS</button>
+              <button class="tab-btn" role="tab" aria-selected="false" aria-controls="install-win" id="itab-win" tabindex="-1">🪟 Windows</button>
+              <button class="tab-btn" role="tab" aria-selected="false" aria-controls="install-linux" id="itab-linux" tabindex="-1">🐧 Linux</button>
+            </div>
+            <div class="tabs-content">
+              <!-- macOS -->
+              <section class="tab-panel" role="tabpanel" id="install-mac" aria-labelledby="itab-mac" aria-hidden="false">
+                <div class="install-steps">
+                  <div class="install-step"><div class="step-num">1</div><div class="step-text">Download and extract the ZIP file from the link above.</div></div>
+                  <div class="install-step"><div class="step-num">2</div><div class="step-text">Move <strong>ConnectX1.app</strong> to your <strong>/Applications</strong> folder.</div></div>
+                  <div class="install-step"><div class="step-num">3</div><div class="step-text">Open Terminal and run the quarantine removal command:<br><br><code class="code-inline">sudo xattr -rd com.apple.quarantine /Applications/ConnectX1.app</code><br><br>This is needed because we don't yet have an Apple Developer certificate — macOS blocks unsigned apps by default. This command removes the quarantine flag safely.</div></div>
+                  <div class="install-step"><div class="step-num">4</div><div class="step-text">Launch ConnectX1 from Applications or Spotlight.</div></div>
+                </div>
+              </section>
+              <!-- Windows -->
+              <section class="tab-panel" role="tabpanel" id="install-win" aria-labelledby="itab-win" aria-hidden="true">
+                <div class="install-steps">
+                  <div class="install-step"><div class="step-num">1</div><div class="step-text">Download the installer (.exe file) from the link above.</div></div>
+                  <div class="install-step"><div class="step-num">2</div><div class="step-text">Run the installer by double-clicking it.</div></div>
+                  <div class="install-step"><div class="step-num">3</div><div class="step-text">You may see a <strong>Windows SmartScreen</strong> warning. Click <strong>"More info"</strong> then <strong>"Run anyway"</strong>. This warning appears because the app is not yet certified by Microsoft — it will disappear once we obtain code signing certificates.</div></div>
+                  <div class="install-step"><div class="step-num">4</div><div class="step-text">Follow the on-screen installer steps and launch ConnectX1 from the Start menu.</div></div>
+                </div>
+              </section>
+              <!-- Linux -->
+              <section class="tab-panel" role="tabpanel" id="install-linux" aria-labelledby="itab-linux" aria-hidden="true">
+                <div class="install-steps">
+                  <div class="install-step"><div class="step-num">1</div><div class="step-text">Download the <strong>.deb</strong> package from the link above.</div></div>
+                  <div class="install-step"><div class="step-num">2</div><div class="step-text">Install using your package manager:<br><br><code class="code-inline">sudo dpkg -i ConnectX1_0.1.1_amd64.deb</code><br><br>Or simply double-click the .deb file to install via your Software Center.</div></div>
+                  <div class="install-step"><div class="step-num">3</div><div class="step-text">Launch ConnectX1 from your application launcher or run <code class="code-inline">connectx1</code> in terminal.</div></div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</div><!-- #app -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="nav-logo-mark">CX</div>
+          <span style="font-family:var(--font-mono);font-size:1.05rem;font-weight:700;color:var(--green);">ConnectX1</span>
+        </div>
+        <p style="margin-top:12px;font-size:.83rem;color:var(--text-3);line-height:1.75;max-width:250px;">Your Ultimate SSH Command Center. Crafted with ❤️ by the ConnectX1 Team.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" aria-label="Discord">💬</a>
+          <a href="#" class="social-btn" aria-label="Twitter">𝕏</a>
+          <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#" data-page="features">Features</a></li>
+          <li><a href="#" data-page="screenshots">Screenshots</a></li>
+          <li><a href="#" data-page="download">Download</a></li>
+          <li><a href="#" data-page="stack">Tech Stack</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Release Notes</a></li>
+          <li><a href="#">Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">License</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ConnectX1. All rights reserved.</p>
+      <span>v0.1.1 — Trial Release</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =============================================
+   SPA ROUTER
+============================================= */
+function navigateTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  document.querySelectorAll('.nav-links a[data-page]').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('hamburger').setAttribute('aria-expanded', 'false');
+  // Init tabs for the page
+  if (page === 'features') setTimeout(() => initTabs('featNav', 'featIndicator'), 80);
+  if (page === 'download') setTimeout(() => { initTabs('installNav', 'installIndicator'); }, 80);
+}
+
+document.addEventListener('click', e => {
+  const link = e.target.closest('[data-page]');
+  if (link) { e.preventDefault(); navigateTo(link.dataset.page); }
+});
+
+/* =============================================
+   HAMBURGER
+============================================= */
+document.getElementById('hamburger').addEventListener('click', function() {
+  const open = this.getAttribute('aria-expanded') === 'true';
+  this.setAttribute('aria-expanded', String(!open));
+  document.getElementById('navLinks').classList.toggle('open', !open);
+});
+
+/* =============================================
+   GENERIC TABS ENGINE
+============================================= */
+const tabInstances = {};
+
+function initTabs(navId, indicatorId) {
+  const nav = document.getElementById(navId);
+  const indicator = document.getElementById(indicatorId);
+  if (!nav || !indicator) return;
+
+  const tabs = Array.from(nav.querySelectorAll('[role="tab"]'));
+  const panelIds = tabs.map(t => t.getAttribute('aria-controls'));
+  const panels = panelIds.map(id => document.getElementById(id));
+
+  let current = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+  if (current < 0) current = 0;
+
+  tabInstances[navId] = { tabs, panels, current, nav, indicator };
+  updateIndicator(navId);
+}
+
+function activateTab(navId, idx, focus = false) {
+  const inst = tabInstances[navId];
+  if (!inst || idx === inst.current) return;
+  const { tabs, panels } = inst;
+
+  tabs[inst.current].setAttribute('aria-selected', 'false');
+  tabs[inst.current].setAttribute('tabindex', '-1');
+  panels[inst.current].setAttribute('aria-hidden', 'true');
+
+  tabs[idx].setAttribute('aria-selected', 'true');
+  tabs[idx].setAttribute('tabindex', '0');
+  panels[idx].setAttribute('aria-hidden', 'false');
+
+  inst.current = idx;
+  updateIndicator(navId);
+  if (focus) tabs[idx].focus();
+  announce(tabs[idx].textContent.trim() + ' selected');
+}
+
+function updateIndicator(navId) {
+  const inst = tabInstances[navId];
+  if (!inst) return;
+  const { tabs, nav, indicator, current } = inst;
+  const tab = tabs[current];
+  if (!tab) return;
+  const tRect = tab.getBoundingClientRect();
+  const nRect = nav.getBoundingClientRect();
+  const left = tRect.left - nRect.left + nav.scrollLeft;
+  indicator.style.transform = `translateX(${left}px)`;
+  indicator.style.width = `${tRect.width}px`;
+}
+
+// Click delegation for all tab navs
+document.addEventListener('click', e => {
+  const tab = e.target.closest('[role="tab"]');
+  if (!tab) return;
+  const nav = tab.closest('[role="tablist"]');
+  if (!nav) return;
+  const navId = nav.id;
+  if (!tabInstances[navId]) return;
+  const idx = tabInstances[navId].tabs.indexOf(tab);
+  if (idx !== -1) activateTab(navId, idx);
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const tab = e.target.closest('[role="tab"]');
+  if (!tab) return;
+  const nav = tab.closest('[role="tablist"]');
+  if (!nav) return;
+  const navId = nav.id;
+  const inst = tabInstances[navId];
+  if (!inst) return;
+  let n = inst.current;
+  const len = inst.tabs.length;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();n=(n+1)%len;}
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();n=(n-1+len)%len;}
+  else if(e.key==='Home'){e.preventDefault();n=0;}
+  else if(e.key==='End'){e.preventDefault();n=len-1;}
+  else return;
+  activateTab(navId, n, true);
+});
+
+// ResizeObserver
+const ro = new ResizeObserver(() => {
+  Object.keys(tabInstances).forEach(id => updateIndicator(id));
+});
+['featNav','installNav'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) ro.observe(el);
+});
+
+/* =============================================
+   ANNOUNCE & TOAST
+============================================= */
+function announce(msg) {
+  const r = document.getElementById('live-region');
+  if (!r) return;
+  r.textContent = ''; void r.offsetHeight; r.textContent = msg;
+}
+function showToast(msg, dur = 3000) {
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast'; t.setAttribute('role','alert'); t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); t.addEventListener('animationend', () => t.remove(), {once:true}); }, dur);
+}
+
+/* =============================================
+   INIT
+============================================= */
+// Pre-init any visible tab navs
+initTabs('featNav', 'featIndicator');
+initTabs('installNav', 'installIndicator');
+</script>
 </body>
 </html>
