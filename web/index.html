@@ -22,9 +22,14 @@
       --text-3: #6b7088;
       --text-4: #444862;
 
+      /* Accent — defaults to green, overridden by JS */
       --green: #00ff88;
       --green-dim: #00ff8818;
       --green-glow: #00ff8840;
+      --border-green: #00ff8840;
+      --text-on-accent: #060609;
+      --grad-brand: linear-gradient(135deg, #00ff88 0%, #00d4aa 50%, #22d3ee 100%);
+
       --teal: #00d4aa;
       --cyan: #22d3ee;
 
@@ -39,7 +44,6 @@
 
       --border: #1e1e32;
       --border-light: #2a2a42;
-      --border-green: #00ff8840;
 
       --r-sm: 6px;
       --r-md: 10px;
@@ -69,7 +73,6 @@
     :focus:not(:focus-visible) { outline: none; }
     img { max-width: 100%; }
 
-    /* Simple background — no glass, no orbs, no complex masks */
     body::before {
       content: '';
       position: fixed;
@@ -88,9 +91,7 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 0 40px;
       height: var(--nav-h);
       background: var(--bg-0);
@@ -128,14 +129,14 @@
       border-radius: var(--r-sm) !important;
       font-size: .78rem !important;
       font-weight: 700 !important;
-      color: #060609 !important;
+      color: var(--text-on-accent) !important;
       transition: opacity .15s !important;
     }
-    .nav-dl:hover { opacity: .88; background: var(--green) !important; color: #060609 !important; }
+    .nav-dl:hover { opacity: .88; }
     .hamburger {
       display: none;
       flex-direction: column; gap: 5px;
-      padding: 8px; background: none; border: none;
+      padding: 8px;
     }
     .hamburger span { display: block; width: 22px; height: 2px; background: var(--text-3); border-radius: 2px; transition: .3s; }
     .hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -176,7 +177,7 @@
       animation: fadeUp .5s ease .15s both;
     }
     .hero h1 .hl {
-      background: linear-gradient(135deg, #00ff88, #00d4aa, #22d3ee);
+      background: var(--grad-brand);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .hero-sub {
@@ -210,7 +211,8 @@
       padding: 13px 28px;
       background: var(--green);
       border-radius: var(--r-md);
-      font-weight: 700; font-size: .88rem; color: #060609;
+      font-weight: 700; font-size: .88rem;
+      color: var(--text-on-accent);
       transition: opacity .15s, transform .15s;
     }
     .btn-primary:hover { opacity: .9; transform: translateY(-2px); }
@@ -292,7 +294,7 @@
     .tabs-frame::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--green), var(--teal), var(--cyan));
+      background: linear-gradient(90deg, transparent 10%, var(--green) 50%, transparent 90%);
       opacity: .6;
     }
     .tabs-nav {
@@ -325,7 +327,7 @@
     }
     .tab-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
     .tab-btn:hover:not([aria-selected="true"]) { color: var(--text-2); }
-    .tab-btn[aria-selected="true"] { color: #060609; }
+    .tab-btn[aria-selected="true"] { color: var(--text-on-accent); }
 
     .tabs-content { position: relative; min-height: 300px; }
     .tab-panel {
@@ -394,20 +396,13 @@
       transition: border-color .15s, transform .15s;
     }
     .screenshot-card:hover { transform: translateY(-3px); border-color: var(--border-light); }
-    .screenshot-preview {
-      height: 190px; display: flex; align-items: center; justify-content: center;
-      background: var(--bg-input);
-    }
+    .screenshot-preview { height: 190px; display: flex; align-items: center; justify-content: center; background: var(--bg-input); }
     .screen-mock {
       width: 88%; height: 88%; border-radius: var(--r-md);
       border: 1px solid var(--border);
       display: flex; flex-direction: column; overflow: hidden;
     }
-    .screen-titlebar {
-      display: flex; align-items: center; gap: 6px; padding: 8px 12px;
-      background: var(--bg-2);
-      border-bottom: 1px solid var(--border);
-    }
+    .screen-titlebar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-2); border-bottom: 1px solid var(--border); }
     .sm-dot { width: 8px; height: 8px; border-radius: 50%; }
     .screen-content { flex: 1; padding: 10px; }
     .screen-row { display: flex; gap: 6px; height: 100%; }
@@ -427,7 +422,6 @@
     .light-mock .screen-main { background: var(--bg-2); }
     .light-mock .screen-line { background: var(--bg-0); }
     .light-mock .screen-line.green { background: #00ff8825; }
-    .light-mock .screen-titlebar { background: var(--bg-2); }
 
     /* ===== STACK ===== */
     .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
@@ -443,11 +437,7 @@
     .stack-name { font-family: var(--font-mono); font-size: .8rem; font-weight: 600; }
     .stack-desc { font-size: .72rem; color: var(--text-3); margin-top: 3px; }
     .perf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 24px; }
-    .perf-card {
-      background: var(--green-dim);
-      border: 1px solid var(--border-green);
-      border-radius: var(--r-md); padding: 16px; text-align: center;
-    }
+    .perf-card { background: var(--green-dim); border: 1px solid var(--border-green); border-radius: var(--r-md); padding: 16px; text-align: center; }
     .perf-icon { font-size: .82rem; font-family: var(--font-mono); color: var(--green); font-weight: 700; }
     .perf-label { font-size: .74rem; color: var(--text-3); margin-top: 5px; }
 
@@ -464,11 +454,11 @@
     }
     .dl-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--green), var(--teal));
+      background: linear-gradient(90deg, var(--green), var(--green));
       opacity: 0; transition: opacity .15s;
     }
     .dl-card:hover { transform: translateY(-4px); border-color: var(--border-green); }
-    .dl-card:hover::before { opacity: 1; }
+    .dl-card:hover::before { opacity: .7; }
     .dl-os-icon { font-size: 2.6rem; margin-bottom: 12px; display: block; }
     .dl-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
     .dl-card p { font-size: .78rem; color: var(--text-3); margin-bottom: 20px; line-height: 1.6; }
@@ -479,17 +469,13 @@
       background: var(--green);
       border-radius: var(--r-md);
       font-weight: 700; font-size: .84rem;
-      color: #060609;
+      color: var(--text-on-accent);
       transition: opacity .15s, transform .15s;
       width: 100%; max-width: 200px;
     }
     .dl-btn:hover { opacity: .9; transform: translateY(-2px); }
     .dl-btn svg { flex-shrink: 0; }
-    .dl-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 10px; font-family: var(--font-mono);
-      font-size: .64rem; color: var(--text-4);
-    }
+    .dl-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-family: var(--font-mono); font-size: .64rem; color: var(--text-4); }
     .trial-notice {
       background: var(--bg-card);
       border: 1px solid #f9a82540;
@@ -501,16 +487,9 @@
     .trial-notice h4 { font-size: .84rem; font-weight: 600; color: var(--accent-yellow); margin-bottom: 3px; }
     .trial-notice p { font-size: .76rem; color: var(--text-3); margin: 0; line-height: 1.6; }
 
-    /* Install steps */
     .install-tabs { margin-top: 40px; }
     .install-steps { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
-    .install-step {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 14px;
-      background: var(--bg-0);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-    }
+    .install-step { display: flex; gap: 12px; align-items: flex-start; padding: 14px; background: var(--bg-0); border: 1px solid var(--border); border-radius: var(--r-md); }
     .step-num {
       width: 26px; height: 26px; flex-shrink: 0;
       background: var(--green-dim); border: 1px solid var(--border-green);
@@ -542,18 +521,8 @@
     .who-card p { font-size: .78rem; color: var(--text-3); line-height: 1.7; margin: 0; }
 
     /* ===== ACCENT SHOWCASE ===== */
-    .accent-showcase {
-      margin-top: 48px;
-      padding: 28px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-    }
-    .accent-showcase-title {
-      font-family: var(--font-mono); font-size: .68rem; font-weight: 600;
-      letter-spacing: 2px; text-transform: uppercase; color: var(--text-4);
-      margin-bottom: 16px;
-    }
+    .accent-showcase { margin-top: 48px; padding: 28px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-xl); }
+    .accent-showcase-title { font-family: var(--font-mono); font-size: .68rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-4); margin-bottom: 16px; }
     .accent-showcase-title::before { content: '// '; opacity: .5; }
     .accent-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
     .accent-swatch {
@@ -561,30 +530,24 @@
       padding: 7px 14px;
       border-radius: var(--r-full);
       font-size: .7rem; font-weight: 600;
-      cursor: default;
-      transition: transform .15s;
+      cursor: pointer;
+      transition: transform .15s, outline-color .2s;
+      outline: 2px solid transparent;
+      outline-offset: 2px;
     }
     .accent-swatch:hover { transform: scale(1.04); }
+    .accent-swatch.theme-active { outline-color: var(--green); }
     .accent-swatch .sw-dot { width: 8px; height: 8px; border-radius: 50%; }
 
     /* ===== FOOTER ===== */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 48px 40px 0;
-    }
+    footer { border-top: 1px solid var(--border); padding: 48px 40px 0; }
     footer::before {
       content: '';
-      display: block;
-      height: 2px;
-      background: linear-gradient(90deg,
-        var(--accent-pink), var(--accent-blue), var(--accent-teal),
-        var(--accent-purple), var(--accent-orange)
-      );
-      margin-bottom: 0;
+      display: block; height: 2px;
+      background: linear-gradient(90deg, var(--accent-pink), var(--accent-blue), var(--accent-teal), var(--accent-purple), var(--accent-orange));
       border-radius: 1px;
     }
     .footer-inner { max-width: 1120px; margin: 0 auto; }
-
     .footer-cta {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -600,8 +563,7 @@
 
     .btn-accent {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px 20px;
-      border-radius: var(--r-md);
+      padding: 10px 20px; border-radius: var(--r-md);
       font-weight: 700; font-size: .8rem;
       transition: opacity .15s, transform .15s;
       white-space: nowrap;
@@ -618,10 +580,7 @@
     .btn-accent-outline-teal   { background: transparent; color: #4db6ac; border: 1px solid rgba(0,105,92,.5); }
     .btn-accent-outline-purple { background: transparent; color: #ce93d8; border: 1px solid rgba(106,27,154,.5); }
 
-    .footer-top {
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 40px; margin-bottom: 36px;
-    }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
     .footer-brand p { font-size: .8rem; color: var(--text-3); margin-top: 10px; line-height: 1.7; max-width: 250px; }
     .footer-socials { display: flex; gap: 8px; margin-top: 14px; }
     .social-btn {
@@ -650,8 +609,13 @@
       padding: 5px 12px;
       border-radius: var(--r-full);
       font-size: .7rem; font-weight: 600;
-      cursor: default;
+      cursor: pointer;
+      transition: transform .15s, outline-color .2s;
+      outline: 2px solid transparent;
+      outline-offset: 2px;
     }
+    .footer-accent-pill:hover { transform: scale(1.04); }
+    .footer-accent-pill.theme-active { outline-color: var(--green); }
 
     .footer-bottom {
       padding: 18px 0 24px;
@@ -670,7 +634,8 @@
     .toast {
       padding: 10px 18px;
       background: var(--green);
-      color: #060609; border-radius: var(--r-md);
+      color: var(--text-on-accent);
+      border-radius: var(--r-md);
       font-weight: 600; font-size: .78rem;
       pointer-events: auto;
       animation: toastIn .3s ease;
@@ -840,7 +805,6 @@
           <h2 class="section-title">Powerful Features</h2>
           <p class="section-sub">Everything you need to manage remote servers efficiently — from terminal to file browser to live metrics.</p>
         </div>
-
         <div class="tabs-frame">
           <div class="tabs-nav" role="tablist" aria-label="Feature categories" id="featNav">
             <div class="tab-indicator" id="featIndicator" aria-hidden="true"></div>
@@ -868,11 +832,8 @@
           <div class="tabs-content">
             <section class="tab-panel" role="tabpanel" id="feat-terminal" aria-labelledby="tab-terminal" aria-hidden="false">
               <div class="panel-card">
-                <div class="panel-hd">
-                  <div class="panel-icon">💻</div>
-                  <div><h2 class="panel-title">Professional Terminal</h2><p class="panel-subtitle">// full-featured · search · auto-reconnect</p></div>
-                </div>
-                <p class="panel-desc">Full-featured terminal with search, auto-reconnect, and smooth performance. Support for both SSH and local sessions. Built on xterm.js with Rust-powered backend for native-speed I/O.</p>
+                <div class="panel-hd"><div class="panel-icon">💻</div><div><h2 class="panel-title">Professional Terminal</h2><p class="panel-subtitle">// full-featured · search · auto-reconnect</p></div></div>
+                <p class="panel-desc">Full-featured terminal with search, auto-reconnect, and smooth performance. Support for both SSH and local sessions.</p>
                 <div class="feat-grid">
                   <div class="feat-item"><h4>SSH &amp; Local Sessions</h4><p>Seamlessly manage both remote SSH and local terminal sessions in one interface</p></div>
                   <div class="feat-item"><h4>In-Terminal Search</h4><p>Full-text search through terminal history with regex and case-sensitivity support</p></div>
@@ -883,13 +844,10 @@
             </section>
             <section class="tab-panel" role="tabpanel" id="feat-sftp" aria-labelledby="tab-sftp" aria-hidden="true">
               <div class="panel-card">
-                <div class="panel-hd">
-                  <div class="panel-icon">📁</div>
-                  <div><h2 class="panel-title">SFTP File Manager</h2><p class="panel-subtitle">// dual-pane · batch ops · conflict resolution</p></div>
-                </div>
-                <p class="panel-desc">Dual-pane file browser with real-time transfers, batch operations, and conflict resolution. Manage remote files as naturally as local ones.</p>
+                <div class="panel-hd"><div class="panel-icon">📁</div><div><h2 class="panel-title">SFTP File Manager</h2><p class="panel-subtitle">// dual-pane · batch ops · conflict resolution</p></div></div>
+                <p class="panel-desc">Dual-pane file browser with real-time transfers, batch operations, and conflict resolution.</p>
                 <div class="feat-grid">
-                  <div class="feat-item"><h4>Dual-Pane Browser</h4><p>View local and remote filesystems side by side for effortless drag-and-drop transfers</p></div>
+                  <div class="feat-item"><h4>Dual-Pane Browser</h4><p>View local and remote filesystems side by side for effortless transfers</p></div>
                   <div class="feat-item"><h4>Batch Operations</h4><p>Upload, download, or delete hundreds of files simultaneously with progress tracking</p></div>
                   <div class="feat-item"><h4>Conflict Resolution</h4><p>Smart prompts when files clash — overwrite, skip, or rename with one click</p></div>
                   <div class="feat-item"><h4>Real-Time Transfers</h4><p>Live transfer speeds, ETA, and queue management for all active operations</p></div>
@@ -898,11 +856,8 @@
             </section>
             <section class="tab-panel" role="tabpanel" id="feat-monitor" aria-labelledby="tab-monitor" aria-hidden="true">
               <div class="panel-card">
-                <div class="panel-hd">
-                  <div class="panel-icon">📊</div>
-                  <div><h2 class="panel-title">Real-Time Insights</h2><p class="panel-subtitle">// cpu · memory · network · services</p></div>
-                </div>
-                <p class="panel-desc">Monitor CPU, memory, network, and services with beautiful interactive graphs and live metrics. Get instant alerts on anomalies before they become incidents.</p>
+                <div class="panel-hd"><div class="panel-icon">📊</div><div><h2 class="panel-title">Real-Time Insights</h2><p class="panel-subtitle">// cpu · memory · network · services</p></div></div>
+                <p class="panel-desc">Monitor CPU, memory, network, and services with beautiful interactive graphs and live metrics.</p>
                 <div class="feat-grid">
                   <div class="feat-item"><h4>CPU &amp; Memory</h4><p>Live graphs with historical context — spot spikes and trends at a glance</p></div>
                   <div class="feat-item"><h4>Network I/O</h4><p>Real-time bandwidth monitoring per interface with cumulative stats</p></div>
@@ -913,11 +868,8 @@
             </section>
             <section class="tab-panel" role="tabpanel" id="feat-editor" aria-labelledby="tab-editor" aria-hidden="true">
               <div class="panel-card">
-                <div class="panel-hd">
-                  <div class="panel-icon">🎨</div>
-                  <div><h2 class="panel-title">Code Editor</h2><p class="panel-subtitle">// monaco editor · 100+ languages · remote edit</p></div>
-                </div>
-                <p class="panel-desc">Built-in Monaco Editor — the same engine powering VS Code — with syntax highlighting for 100+ languages. Edit remote files seamlessly without leaving your SSH session.</p>
+                <div class="panel-hd"><div class="panel-icon">🎨</div><div><h2 class="panel-title">Code Editor</h2><p class="panel-subtitle">// monaco editor · 100+ languages · remote edit</p></div></div>
+                <p class="panel-desc">Built-in Monaco Editor — the same engine powering VS Code — with syntax highlighting for 100+ languages.</p>
                 <div class="feat-grid">
                   <div class="feat-item"><h4>Monaco Engine</h4><p>VS Code's editor engine brings IntelliSense, minimap, and multi-cursor editing</p></div>
                   <div class="feat-item"><h4>100+ Languages</h4><p>Full syntax highlighting from Python to Rust, YAML to HCL, and everything between</p></div>
@@ -928,11 +880,8 @@
             </section>
             <section class="tab-panel" role="tabpanel" id="feat-security" aria-labelledby="tab-security" aria-hidden="true">
               <div class="panel-card">
-                <div class="panel-hd">
-                  <div class="panel-icon">🔐</div>
-                  <div><h2 class="panel-title">Enterprise Security</h2><p class="panel-subtitle">// master password · encryption · auto-lock</p></div>
-                </div>
-                <p class="panel-desc">Master password protection, AES-256 encryption, auto-lock, and secure credential storage. Your server credentials never leave your device unencrypted.</p>
+                <div class="panel-hd"><div class="panel-icon">🔐</div><div><h2 class="panel-title">Enterprise Security</h2><p class="panel-subtitle">// master password · encryption · auto-lock</p></div></div>
+                <p class="panel-desc">Master password protection, AES-256 encryption, auto-lock, and secure credential storage.</p>
                 <div class="feat-grid">
                   <div class="feat-item"><h4>Master Password</h4><p>Single master password protects all stored credentials and session data</p></div>
                   <div class="feat-item"><h4>AES-256 Encryption</h4><p>All stored data encrypted at rest using industry-standard AES-256 cipher</p></div>
@@ -943,7 +892,6 @@
             </section>
           </div>
         </div>
-
         <div style="margin-top:40px;">
           <div class="section-label">All Features</div>
           <div class="features-grid" style="margin-top:16px;">
@@ -971,12 +919,7 @@
             <div class="screenshot-preview">
               <div class="screen-mock">
                 <div class="screen-titlebar"><div class="sm-dot" style="background:#ff5f57;"></div><div class="sm-dot" style="background:#febc2e;"></div><div class="sm-dot" style="background:#28c840;"></div></div>
-                <div class="screen-content">
-                  <div class="screen-row">
-                    <div class="screen-sidebar"><div class="screen-item active"></div><div class="screen-item"></div><div class="screen-item"></div><div class="screen-item"></div><div class="screen-item"></div></div>
-                    <div class="screen-main"><div class="screen-line green"></div><div class="screen-line"></div><div class="screen-line cyan"></div><div class="screen-line"></div><div class="screen-line green" style="width:30%;"></div><div class="screen-line amber"></div><div class="screen-line"></div></div>
-                  </div>
-                </div>
+                <div class="screen-content"><div class="screen-row"><div class="screen-sidebar"><div class="screen-item active"></div><div class="screen-item"></div><div class="screen-item"></div><div class="screen-item"></div><div class="screen-item"></div></div><div class="screen-main"><div class="screen-line green"></div><div class="screen-line"></div><div class="screen-line cyan"></div><div class="screen-line"></div><div class="screen-line green" style="width:30%;"></div><div class="screen-line amber"></div><div class="screen-line"></div></div></div></div>
               </div>
             </div>
             <div class="screenshot-info"><h3>Dark Theme — Main Interface</h3><p>Multi-session workspace with server sidebar and terminal pane</p></div>
@@ -985,12 +928,7 @@
             <div class="screenshot-preview">
               <div class="screen-mock light-mock">
                 <div class="screen-titlebar"><div class="sm-dot" style="background:#ff5f57;"></div><div class="sm-dot" style="background:#febc2e;"></div><div class="sm-dot" style="background:#28c840;"></div></div>
-                <div class="screen-content">
-                  <div class="screen-row">
-                    <div class="screen-sidebar"><div class="screen-item active" style="background:#00ff8825;border:1px solid #00ff8840;"></div><div class="screen-item"></div><div class="screen-item"></div><div class="screen-item"></div></div>
-                    <div class="screen-main"><div class="screen-line" style="background:var(--bg-0);width:60%;"></div><div class="screen-line" style="background:var(--bg-0);"></div><div class="screen-line" style="background:#00ff8825;width:40%;"></div><div class="screen-line" style="background:var(--bg-0);width:75%;"></div><div class="screen-line" style="background:var(--bg-0);"></div></div>
-                  </div>
-                </div>
+                <div class="screen-content"><div class="screen-row"><div class="screen-sidebar"><div class="screen-item active" style="background:#00ff8825;border:1px solid #00ff8840;"></div><div class="screen-item"></div><div class="screen-item"></div><div class="screen-item"></div></div><div class="screen-main"><div class="screen-line" style="background:var(--bg-0);width:60%;"></div><div class="screen-line" style="background:var(--bg-0);"></div><div class="screen-line" style="background:#00ff8825;width:40%;"></div><div class="screen-line" style="background:var(--bg-0);width:75%;"></div><div class="screen-line" style="background:var(--bg-0);"></div></div></div></div>
               </div>
             </div>
             <div class="screenshot-info"><h3>Light Theme — Clean &amp; Professional</h3><p>Full light mode with crisp typography and soft contrast</p></div>
@@ -1139,7 +1077,7 @@
                 <div class="install-steps">
                   <div class="install-step"><div class="step-num">1</div><div class="step-text">Download the installer (.exe file) from the link above.</div></div>
                   <div class="install-step"><div class="step-num">2</div><div class="step-text">Run the installer by double-clicking it.</div></div>
-                  <div class="install-step"><div class="step-num">3</div><div class="step-text">If Windows SmartScreen appears, click <strong>"More info"</strong> then <strong>"Run anyway"</strong>. This warning appears because the app is not yet code-signed.</div></div>
+                  <div class="install-step"><div class="step-num">3</div><div class="step-text">If Windows SmartScreen appears, click <strong>"More info"</strong> then <strong>"Run anyway"</strong>.</div></div>
                   <div class="install-step"><div class="step-num">4</div><div class="step-text">Follow the on-screen steps and launch ConnectX1 from the Start menu.</div></div>
                 </div>
               </section>
@@ -1154,18 +1092,19 @@
           </div>
         </div>
 
+        <!-- Accent showcase — clickable swatches -->
         <div class="accent-showcase">
-          <div class="accent-showcase-title">Available Accent Themes</div>
+          <div class="accent-showcase-title">Available Accent Themes — Click to Preview</div>
           <div class="accent-swatches">
-            <span class="accent-swatch" style="background:#c2185b18;color:#e91e8c;border:1px solid #c2185b40;"><span class="sw-dot" style="background:var(--accent-pink);"></span>Dark Pink</span>
-            <span class="accent-swatch" style="background:#1565c018;color:#4fc3f7;border:1px solid #1565c040;"><span class="sw-dot" style="background:var(--accent-blue);"></span>Dark Blue</span>
-            <span class="accent-swatch" style="background:#c6282818;color:#ef9a9a;border:1px solid #c6282840;"><span class="sw-dot" style="background:var(--accent-red);"></span>Red</span>
-            <span class="accent-swatch" style="background:#f5f0e808;color:var(--accent-cream);border:1px solid #f5f0e830;"><span class="sw-dot" style="background:var(--accent-cream);"></span>Cream</span>
-            <span class="accent-swatch" style="background:#f9a82518;color:#ffd54f;border:1px solid #f9a82540;"><span class="sw-dot" style="background:var(--accent-yellow);"></span>Dark Yellow</span>
-            <span class="accent-swatch" style="background:#e6510018;color:#ffab40;border:1px solid #e6510040;"><span class="sw-dot" style="background:var(--accent-orange);"></span>Dark Orange</span>
-            <span class="accent-swatch" style="background:#00695c18;color:#4db6ac;border:1px solid #00695c40;"><span class="sw-dot" style="background:var(--accent-teal);"></span>Dark Teal</span>
-            <span class="accent-swatch" style="background:#6a1b9a18;color:#ce93d8;border:1px solid #6a1b9a40;"><span class="sw-dot" style="background:var(--accent-purple);"></span>Dark Purple</span>
-            <span class="accent-swatch" style="background:var(--green-dim);color:var(--green);border:1px solid var(--border-green);"><span class="sw-dot" style="background:var(--green);"></span>Default Green</span>
+            <span class="accent-swatch" data-theme-pill="pink" style="background:#e91e6318;color:#e91e8c;border:1px solid #e91e6340;"><span class="sw-dot" style="background:#e91e63;"></span>Dark Pink</span>
+            <span class="accent-swatch" data-theme-pill="blue" style="background:#42a5f518;color:#4fc3f7;border:1px solid #42a5f540;"><span class="sw-dot" style="background:#42a5f5;"></span>Dark Blue</span>
+            <span class="accent-swatch" data-theme-pill="red" style="background:#ef535018;color:#ef9a9a;border:1px solid #ef535040;"><span class="sw-dot" style="background:#ef5350;"></span>Red</span>
+            <span class="accent-swatch" data-theme-pill="cream" style="background:#f5f0e810;color:#f5f0e8;border:1px solid #f5f0e828;"><span class="sw-dot" style="background:#f5f0e8;"></span>Cream</span>
+            <span class="accent-swatch" data-theme-pill="yellow" style="background:#ffd54f18;color:#ffd54f;border:1px solid #ffd54f40;"><span class="sw-dot" style="background:#ffd54f;"></span>Dark Yellow</span>
+            <span class="accent-swatch" data-theme-pill="orange" style="background:#ff8a6518;color:#ff8a65;border:1px solid #ff8a6540;"><span class="sw-dot" style="background:#ff8a65;"></span>Dark Orange</span>
+            <span class="accent-swatch" data-theme-pill="teal" style="background:#4db6ac18;color:#4db6ac;border:1px solid #4db6ac40;"><span class="sw-dot" style="background:#4db6ac;"></span>Dark Teal</span>
+            <span class="accent-swatch" data-theme-pill="purple" style="background:#ce93d818;color:#ce93d8;border:1px solid #ce93d840;"><span class="sw-dot" style="background:#ce93d8;"></span>Dark Purple</span>
+            <span class="accent-swatch" data-theme-pill="green" style="background:var(--green-dim);color:var(--green);border:1px solid var(--border-green);"><span class="sw-dot" style="background:#00ff88;"></span>Default Green</span>
           </div>
         </div>
 
@@ -1175,6 +1114,7 @@
 
 </div>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div class="footer-cta">
@@ -1229,16 +1169,17 @@
       </div>
     </div>
 
+    <!-- Clickable accent theme pills in footer -->
     <div class="footer-accent-row" aria-label="Available accent themes">
-      <span class="footer-accent-pill" style="background:#c2185b18;color:#e91e8c;border:1px solid #c2185b30;">Dark Pink</span>
-      <span class="footer-accent-pill" style="background:#1565c018;color:#64b5f6;border:1px solid #1565c030;">Dark Blue</span>
-      <span class="footer-accent-pill" style="background:#c6282818;color:#ef9a9a;border:1px solid #c6282830;">Red</span>
-      <span class="footer-accent-pill" style="background:#f5f0e808;color:var(--accent-cream);border:1px solid #f5f0e820;">Cream</span>
-      <span class="footer-accent-pill" style="background:#f9a82518;color:#ffd54f;border:1px solid #f9a82530;">Dark Yellow</span>
-      <span class="footer-accent-pill" style="background:#e6510018;color:#ffab40;border:1px solid #e6510030;">Dark Orange</span>
-      <span class="footer-accent-pill" style="background:#00695c18;color:#4db6ac;border:1px solid #00695c30;">Dark Teal</span>
-      <span class="footer-accent-pill" style="background:#6a1b9a18;color:#ce93d8;border:1px solid #6a1b9a30;">Dark Purple</span>
-      <span class="footer-accent-pill" style="background:var(--green-dim);color:var(--green);border:1px solid var(--border-green);">Default Green</span>
+      <span class="footer-accent-pill" data-theme-pill="pink" style="background:#e91e6318;color:#e91e8c;border:1px solid #e91e6330;">● Dark Pink</span>
+      <span class="footer-accent-pill" data-theme-pill="blue" style="background:#42a5f518;color:#64b5f6;border:1px solid #42a5f530;">● Dark Blue</span>
+      <span class="footer-accent-pill" data-theme-pill="red" style="background:#ef535018;color:#ef9a9a;border:1px solid #ef535030;">● Red</span>
+      <span class="footer-accent-pill" data-theme-pill="cream" style="background:#f5f0e810;color:#f5f0e8;border:1px solid #f5f0e820;">● Cream</span>
+      <span class="footer-accent-pill" data-theme-pill="yellow" style="background:#ffd54f18;color:#ffd54f;border:1px solid #ffd54f30;">● Dark Yellow</span>
+      <span class="footer-accent-pill" data-theme-pill="orange" style="background:#ff8a6518;color:#ff8a65;border:1px solid #ff8a6530;">● Dark Orange</span>
+      <span class="footer-accent-pill" data-theme-pill="teal" style="background:#4db6ac18;color:#4db6ac;border:1px solid #4db6ac30;">● Dark Teal</span>
+      <span class="footer-accent-pill" data-theme-pill="purple" style="background:#ce93d818;color:#ce93d8;border:1px solid #ce93d830;">● Dark Purple</span>
+      <span class="footer-accent-pill" data-theme-pill="green" style="background:var(--green-dim);color:var(--green);border:1px solid var(--border-green);">● Default Green</span>
     </div>
 
     <div class="footer-bottom">
@@ -1252,6 +1193,76 @@
 </footer>
 
 <script>
+/* =============================================
+   ACCENT THEME ENGINE
+============================================= */
+var THEMES = {
+  green:  { primary:'#00ff88', dim:'#00ff8818', glow:'#00ff8840', textOn:'#060609', gMid:'#00d4aa', gEnd:'#22d3ee', label:'Default Green' },
+  pink:   { primary:'#e91e63', dim:'#e91e6318', glow:'#e91e6340', textOn:'#ffffff', gMid:'#f06292', gEnd:'#f48fb1', label:'Dark Pink' },
+  blue:   { primary:'#42a5f5', dim:'#42a5f518', glow:'#42a5f540', textOn:'#060609', gMid:'#64b5f6', gEnd:'#90caf9', label:'Dark Blue' },
+  red:    { primary:'#ef5350', dim:'#ef535018', glow:'#ef535040', textOn:'#ffffff', gMid:'#e57373', gEnd:'#ef9a9a', label:'Red' },
+  cream:  { primary:'#f5f0e8', dim:'#f5f0e812', glow:'#f5f0e835', textOn:'#1a1a2e', gMid:'#e8e0d4', gEnd:'#d4cdc2', label:'Cream' },
+  yellow: { primary:'#ffd54f', dim:'#ffd54f18', glow:'#ffd54f40', textOn:'#1a1a2e', gMid:'#ffe082', gEnd:'#fff176', label:'Dark Yellow' },
+  orange: { primary:'#ff8a65', dim:'#ff8a6518', glow:'#ff8a6540', textOn:'#1a1a2e', gMid:'#ffab91', gEnd:'#ffccbc', label:'Dark Orange' },
+  teal:   { primary:'#4db6ac', dim:'#4db6ac18', glow:'#4db6ac40', textOn:'#060609', gMid:'#80cbc4', gEnd:'#b2dfdb', label:'Dark Teal' },
+  purple: { primary:'#ce93d8', dim:'#ce93d818', glow:'#ce93d840', textOn:'#060609', gMid:'#e1bee7', gEnd:'#f3e5f5', label:'Dark Purple' }
+};
+
+var currentTheme = 'green';
+
+function setTheme(name) {
+  var t = THEMES[name];
+  if (!t) return;
+  currentTheme = name;
+  var root = document.documentElement.style;
+  root.setProperty('--green', t.primary);
+  root.setProperty('--green-dim', t.dim);
+  root.setProperty('--green-glow', t.glow);
+  root.setProperty('--border-green', t.glow);
+  root.setProperty('--text-on-accent', t.textOn);
+  root.setProperty('--grad-brand', 'linear-gradient(135deg,' + t.primary + ' 0%,' + t.gMid + ' 50%,' + t.gEnd + ' 100%)');
+
+  /* Mark active pill(s) — both footer and download page */
+  document.querySelectorAll('[data-theme-pill]').forEach(function(el) {
+    if (el.dataset.themePill === name) {
+      el.classList.add('theme-active');
+    } else {
+      el.classList.remove('theme-active');
+    }
+  });
+
+  /* Save preference */
+  try { localStorage.setItem('cx1-accent', name); } catch(e) {}
+
+  showToast('Theme: ' + t.label);
+}
+
+/* Click handler for all theme pills */
+document.addEventListener('click', function(e) {
+  var pill = e.target.closest('[data-theme-pill]');
+  if (pill) {
+    e.preventDefault();
+    setTheme(pill.dataset.themePill);
+  }
+});
+
+/* Restore saved theme on load */
+(function() {
+  try {
+    var saved = localStorage.getItem('cx1-accent');
+    if (saved && THEMES[saved]) {
+      setTheme(saved);
+    } else {
+      setTheme('green');
+    }
+  } catch(e) {
+    setTheme('green');
+  }
+})();
+
+/* =============================================
+   SPA ROUTER
+============================================= */
 function navigateTo(page) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   var target = document.getElementById('page-' + page);
@@ -1270,6 +1281,9 @@ document.addEventListener('click', function(e) {
   if (link) { e.preventDefault(); navigateTo(link.dataset.page); }
 });
 
+/* =============================================
+   HAMBURGER
+============================================= */
 document.getElementById('hamburger').addEventListener('click', function() {
   var open = this.getAttribute('aria-expanded') === 'true';
   this.setAttribute('aria-expanded', String(!open));
@@ -1285,6 +1299,9 @@ document.addEventListener('click', function(e) {
   }
 });
 
+/* =============================================
+   TABS ENGINE
+============================================= */
 var tabInstances = {};
 
 function initTabs(navId, indicatorId) {
@@ -1292,8 +1309,7 @@ function initTabs(navId, indicatorId) {
   var indicator = document.getElementById(indicatorId);
   if (!nav || !indicator) return;
   var tabs = Array.from(nav.querySelectorAll('[role="tab"]'));
-  var panelIds = tabs.map(function(t) { return t.getAttribute('aria-controls'); });
-  var panels = panelIds.map(function(id) { return document.getElementById(id); });
+  var panels = tabs.map(function(t) { return document.getElementById(t.getAttribute('aria-controls')); });
   var current = tabs.findIndex(function(t) { return t.getAttribute('aria-selected') === 'true'; });
   if (current < 0) current = 0;
   tabInstances[navId] = { tabs: tabs, panels: panels, current: current, nav: nav, indicator: indicator };
@@ -1320,22 +1336,19 @@ function updateIndicator(navId) {
   if (!inst) return;
   var tab = inst.tabs[inst.current];
   if (!tab) return;
-  var tRect = tab.getBoundingClientRect();
-  var nRect = inst.nav.getBoundingClientRect();
-  var left = tRect.left - nRect.left + inst.nav.scrollLeft;
-  inst.indicator.style.transform = 'translateX(' + left + 'px)';
-  inst.indicator.style.width = tRect.width + 'px';
+  var tR = tab.getBoundingClientRect();
+  var nR = inst.nav.getBoundingClientRect();
+  inst.indicator.style.transform = 'translateX(' + (tR.left - nR.left + inst.nav.scrollLeft) + 'px)';
+  inst.indicator.style.width = tR.width + 'px';
 }
 
 document.addEventListener('click', function(e) {
   var tab = e.target.closest('[role="tab"]');
   if (!tab) return;
   var nav = tab.closest('[role="tablist"]');
-  if (!nav) return;
-  var navId = nav.id;
-  if (!tabInstances[navId]) return;
-  var idx = tabInstances[navId].tabs.indexOf(tab);
-  if (idx !== -1) activateTab(navId, idx);
+  if (!nav || !tabInstances[nav.id]) return;
+  var idx = tabInstances[nav.id].tabs.indexOf(tab);
+  if (idx !== -1) activateTab(nav.id, idx);
 });
 
 document.addEventListener('keydown', function(e) {
@@ -1343,46 +1356,43 @@ document.addEventListener('keydown', function(e) {
   if (!tab) return;
   var nav = tab.closest('[role="tablist"]');
   if (!nav) return;
-  var navId = nav.id;
-  var inst = tabInstances[navId];
+  var inst = tabInstances[nav.id];
   if (!inst) return;
-  var n = inst.current;
-  var len = inst.tabs.length;
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); n = (n + 1) % len; }
-  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); n = (n - 1 + len) % len; }
-  else if (e.key === 'Home') { e.preventDefault(); n = 0; }
-  else if (e.key === 'End') { e.preventDefault(); n = len - 1; }
+  var n = inst.current, len = inst.tabs.length;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') { e.preventDefault(); n=(n+1)%len; }
+  else if (e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); n=(n-1+len)%len; }
+  else if (e.key==='Home') { e.preventDefault(); n=0; }
+  else if (e.key==='End') { e.preventDefault(); n=len-1; }
   else return;
-  activateTab(navId, n, true);
+  activateTab(nav.id, n, true);
 });
 
 var ro = new ResizeObserver(function() {
   Object.keys(tabInstances).forEach(function(id) { updateIndicator(id); });
 });
-['featNav', 'installNav'].forEach(function(id) {
+['featNav','installNav'].forEach(function(id) {
   var el = document.getElementById(id);
   if (el) ro.observe(el);
 });
 
+/* =============================================
+   ANNOUNCE & TOAST
+============================================= */
 function announce(msg) {
   var r = document.getElementById('live-region');
   if (!r) return;
-  r.textContent = '';
-  void r.offsetHeight;
-  r.textContent = msg;
+  r.textContent = ''; void r.offsetHeight; r.textContent = msg;
 }
 
 function showToast(msg, dur) {
   var wrap = document.getElementById('toast-wrap');
   var t = document.createElement('div');
-  t.className = 'toast';
-  t.setAttribute('role', 'alert');
-  t.textContent = msg;
+  t.className = 'toast'; t.setAttribute('role', 'alert'); t.textContent = msg;
   wrap.appendChild(t);
   setTimeout(function() {
     t.classList.add('out');
     t.addEventListener('animationend', function() { t.remove(); }, { once: true });
-  }, dur || 3000);
+  }, dur || 2500);
 }
 
 setTimeout(function() { initTabs('featNav', 'featIndicator'); }, 200);
